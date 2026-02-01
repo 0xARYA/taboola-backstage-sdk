@@ -1,0 +1,48 @@
+# Source files (dist is published)
+src/
+tests/
+
+# Config files
+*.config.js
+*.config.ts
+tsconfig*.json
+.prettierrc
+.prettierignore
+.editorconfig
+.eslintrc*
+eslint.config.*
+
+# Development
+.env*
+.vscode/
+.idea/
+.claude/
+.playwright-mcp/
+*.swp
+*.swo
+
+# Test & coverage
+coverage/
+*.test.ts
+*.spec.ts
+__tests__/
+__mocks__/
+
+# Build artifacts
+*.tsbuildinfo
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation source (keep README)
+docs/
+
+# Examples (optional - uncomment to exclude)
+# examples/
