@@ -276,12 +276,42 @@ export interface CreateCampaignRequest {
 
 /**
  * Campaign update request
+ *
+ * Submit a JSON object with only the fields you want to update.
+ * Fields that are omitted or null will not be updated.
+ *
+ * @example Update a single field
+ * ```typescript
+ * await client.campaigns.update('account-id', 'campaign-id', {
+ *   name: 'DemoCampaign - Edited'
+ * });
+ * ```
+ *
+ * @example Update multiple fields
+ * ```typescript
+ * await client.campaigns.update('account-id', 'campaign-id', {
+ *   name: 'Demo Campaign - Edited Again',
+ *   branding_text: 'New branding text',
+ *   spending_limit: 10000,
+ *   spending_limit_model: 'ENTIRE',
+ *   country_targeting: {
+ *     type: 'INCLUDE',
+ *     value: ['AU', 'GB']
+ *   },
+ *   platform_targeting: {
+ *     type: 'INCLUDE',
+ *     value: ['TBLT', 'PHON']
+ *   }
+ * });
+ * ```
  */
 export interface UpdateCampaignRequest {
   /** Campaign name */
   name?: string;
   /** Branding text */
   branding_text?: string;
+  /** Pricing model */
+  pricing_model?: PricingModel;
   /** Cost per click */
   cpc?: number;
   /** Spending limit */
@@ -298,20 +328,68 @@ export interface UpdateCampaignRequest {
   cpa_goal?: number;
   /** Country targeting */
   country_targeting?: TargetingValue;
+  /** Sub-country (region) targeting */
+  sub_country_targeting?: TargetingValue;
+  /** DMA targeting (US only) */
+  dma_country_targeting?: TargetingValue;
+  /** Region targeting */
+  region_country_targeting?: TargetingValue;
+  /** City targeting */
+  city_targeting?: TargetingValue;
+  /** Postal code targeting */
+  postal_code_targeting?: TargetingValue;
+  /** Contextual targeting */
+  contextual_targeting?: TargetingValue;
   /** Platform targeting */
   platform_targeting?: TargetingValue;
+  /** Publisher targeting (blocking) */
+  publisher_targeting?: TargetingValue;
   /** OS targeting */
   os_targeting?: TargetingValue;
+  /** Connection type targeting */
+  connection_type_targeting?: TargetingValue;
+  /** Browser targeting */
+  browser_targeting?: TargetingValue;
+  /** Auto publisher targeting */
+  auto_publisher_targeting?: TargetingValue;
+  /** Publisher bid modifiers */
+  publisher_bid_modifier?: PublisherBidModifierCollection;
+  /** Publisher bid strategy modifiers */
+  publisher_bid_strategy_modifiers?: PublisherBidStrategyModifierCollection;
+  /** Campaign profile ID */
+  campaign_profile?: string | null;
   /** Start date */
-  start_date?: DateString;
+  start_date?: DateString | null;
   /** End date */
-  end_date?: DateString;
-  /** Whether campaign is active */
+  end_date?: DateString | null;
+  /** Whether campaign is active (use for pause/unpause) */
   is_active?: boolean;
   /** Tracking code */
   tracking_code?: string;
   /** Comments */
   comments?: string;
+  /** Traffic allocation mode */
+  traffic_allocation_mode?: TrafficAllocationMode;
+  /** A/B test end date */
+  traffic_allocation_ab_test_end_date?: DateString | null;
+  /** External brand safety config */
+  external_brand_safety?: ExternalBrandSafety;
+  /** Marketplace audience targeting */
+  audience_segments_multi_targeting?: MultiTargeting;
+  /** Custom audience targeting */
+  custom_audience_targeting?: MultiTargeting;
+  /** Marking label targeting */
+  marking_label_multi_targeting?: MultiTargeting;
+  /** Lookalike audience targeting */
+  lookalike_audience_targeting?: MultiTargeting;
+  /** Contextual segments targeting */
+  contextual_segments_targeting?: MultiTargeting;
+  /** Marketing objective */
+  marketing_objective?: MarketingObjective;
+  /** Verification pixel config */
+  verification_pixel?: VerificationPixel;
+  /** Viewability tag config */
+  viewability_tag?: ViewabilityTag;
   /** Activity schedule */
   activity_schedule?: ActivitySchedule;
 }

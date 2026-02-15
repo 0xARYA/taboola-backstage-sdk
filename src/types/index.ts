@@ -93,6 +93,7 @@ export type {
   ItemPolicyReview,
   ItemVerificationPixel,
   ItemViewabilityTag,
+  PerformanceVideoData,
   RSSChildItem,
   RSSChildrenListResponse,
   UpdateItemRequest,

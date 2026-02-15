@@ -122,18 +122,42 @@ export class ItemsAPI {
   }
 
   /**
-   * Update an existing item
+   * Update an existing item (static or motion ad)
+   *
+   * Submit only the fields you want to update. Fields that are omitted or null
+   * will remain unchanged. The endpoint automatically detects the item type.
+   *
+   * Note: While status is CRAWLING, the Item is in a read-only state - no fields can be modified.
    *
    * @param accountId - Account ID
    * @param campaignId - Campaign ID
    * @param itemId - Item ID
-   * @param updates - Fields to update
+   * @param updates - Fields to update (partial)
    *
-   * @example
+   * @example Update a static item
    * ```typescript
    * const item = await client.items.update('my-account', '12345', '67890', {
    *   title: 'Updated Title!',
    *   is_active: true,
+   * });
+   * ```
+   *
+   * @example Update a motion ad
+   * ```typescript
+   * const item = await client.items.update('my-account', '12345', '67890', {
+   *   title: 'Updated Motion Ad Title',
+   *   description: 'New description',
+   *   performance_video_data: {
+   *     video_url: 'https://example.com/video.mp4',
+   *     fallback_url: 'https://example.com/fallback.jpg',
+   *   },
+   * });
+   * ```
+   *
+   * @example Pause an item (alternatively, use pause() method)
+   * ```typescript
+   * const item = await client.items.update('my-account', '12345', '67890', {
+   *   is_active: false,
    * });
    * ```
    */

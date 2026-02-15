@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 
-A comprehensive TypeScript SDK for the [Taboola Backstage API](https://developers.taboola.com/backstage-api/reference). Manage campaigns, ads, targeting, audiences, pixel tracking, and reporting programmatically.
+A comprehensive TypeScript SDK for the [Taboola Backstage API](https://developers.taboola.com/backstage-api/reference). Manage campaigns, ads, targeting, audiences, pixel tracking, and reporting programmatically with full type safety.
 
 ## Features
 
@@ -108,10 +108,18 @@ const campaign = await client.campaigns.create('account-id', {
   marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
 });
 
-// Update campaign
+// Update campaign (partial updates - only specified fields are changed)
 await client.campaigns.update('account-id', 'campaign-id', {
   cpc: 0.75,
   daily_cap: 500,
+  country_targeting: {
+    type: 'INCLUDE',
+    value: ['US', 'CA', 'GB'],
+  },
+  platform_targeting: {
+    type: 'INCLUDE',
+    value: ['DESK', 'PHON'],
+  },
 });
 
 // Pause / Unpause
@@ -157,9 +165,19 @@ const item = await client.items.create('account-id', 'campaign-id', {
   cta: { cta_type: 'LEARN_MORE' },
 });
 
-// Update item
+// Update item (static or motion ad - partial updates supported)
 await client.items.update('account-id', 'campaign-id', 'item-id', {
   title: 'Updated Title',
+  url: 'https://example.com/new-landing-page',
+});
+
+// Update motion ad with video
+await client.items.update('account-id', 'campaign-id', 'motion-ad-id', {
+  title: 'Updated Motion Ad',
+  performance_video_data: {
+    video_url: 'https://example.com/video.mp4',
+    fallback_url: 'https://example.com/fallback.jpg',
+  },
 });
 
 // Pause / Unpause
@@ -517,6 +535,39 @@ const client = new TaboolaClient({
 ## API Documentation
 
 For detailed API documentation, see the [Taboola Backstage API Reference](https://developers.taboola.com/backstage-api/reference).
+
+## Changelog
+
+### v0.3.0 (2024)
+
+**Enhanced Update Support** - Comprehensive updates for campaigns and items
+
+- **Campaign Updates**: Expanded `UpdateCampaignRequest` to support all updatable fields including:
+  - Geographic targeting (DMA, region, city, postal code, sub-country)
+  - Advanced targeting (contextual, browser, connection type, auto publisher)
+  - Bid modifiers (publisher bid modifiers and bid strategy modifiers)
+  - Audience targeting (marketplace, custom, lookalike, marking labels, contextual segments)
+  - Additional fields (pricing model, campaign profile, traffic allocation, external brand safety, verification pixels, viewability tags)
+
+- **Item Updates**: Expanded `UpdateItemRequest` to support both static items and motion ads:
+  - Static items: `url`, `thumbnail_url`, `verification_pixel`, `viewability_tag`, `creative_focus`
+  - Motion ads: New `PerformanceVideoData` type with `video_url` and `fallback_url`
+  - Enhanced documentation with examples for both item types
+
+- **Partial Updates**: Both endpoints properly support partial updates where only specified fields are modified
+- **Improved Documentation**: Added comprehensive JSDoc examples and better API alignment
+
+### v0.2.1 (2024)
+
+Minor bug fixes and documentation improvements.
+
+### v0.2.0 (2024)
+
+Added support for shared budgets, marking labels, and realtime report signatures.
+
+### v0.1.0 (2024)
+
+Initial release with core API support.
 
 ## License
 

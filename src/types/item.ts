@@ -150,23 +150,73 @@ export interface CreateItemRequest {
 }
 
 /**
+ * Performance video data for motion ads
+ */
+export interface PerformanceVideoData {
+  /** URL to the video file (MP4 format) */
+  video_url: string;
+  /** URL to the fallback image (JPG/PNG format) */
+  fallback_url: string;
+}
+
+/**
  * Update campaign item request
+ *
+ * Submit only the fields you want to update. Fields that are omitted or null
+ * will remain unchanged.
+ *
+ * Note: While status is CRAWLING, the Item is in a read-only state - no fields can be modified.
+ *
+ * @example Update a static item
+ * ```typescript
+ * await client.items.update('account-id', 'campaign-id', 'item-id', {
+ *   title: 'Updated Title',
+ *   is_active: true,
+ * });
+ * ```
+ *
+ * @example Update a motion ad
+ * ```typescript
+ * await client.items.update('account-id', 'campaign-id', 'item-id', {
+ *   title: 'Updated Motion Ad',
+ *   performance_video_data: {
+ *     video_url: 'https://example.com/video.mp4',
+ *     fallback_url: 'https://example.com/fallback.jpg',
+ *   },
+ * });
+ * ```
  */
 export interface UpdateItemRequest {
   /** Ad title */
   title?: string;
+  /** Landing page URL */
+  url?: string;
   /** Ad description */
   description?: string;
-  /** Thumbnail image URL */
+  /** Thumbnail image URL (static items only) */
   thumbnail_url?: string;
-  /** Whether item is active */
+  /** Whether item is active (use for pause/unpause) */
   is_active?: boolean;
   /** CTA configuration */
   cta?: CTA;
+  /**
+   * Creative focus configuration
+   * @deprecated This field has been deprecated
+   */
+  creative_focus?: CreativeFocus;
+  /** Verification pixel */
+  verification_pixel?: ItemVerificationPixel;
+  /** Viewability tag */
+  viewability_tag?: ItemViewabilityTag;
   /** Custom tracking data */
   custom_data?: string;
   /** Third-party tracking pixels */
   third_party_tags?: string[];
+  /**
+   * Performance video data (motion ads only)
+   * Contains video_url (MP4) and fallback_url (JPG/PNG)
+   */
+  performance_video_data?: PerformanceVideoData;
 }
 
 /**

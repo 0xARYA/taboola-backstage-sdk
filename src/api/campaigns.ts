@@ -134,15 +134,42 @@ export class CampaignsAPI {
   /**
    * Update an existing campaign
    *
+   * Submit only the fields you want to update. Fields that are omitted or null
+   * will remain unchanged.
+   *
    * @param accountId - Account ID
    * @param campaignId - Campaign ID
-   * @param updates - Fields to update
+   * @param updates - Fields to update (partial)
    *
-   * @example
+   * @example Update a single field
    * ```typescript
    * const campaign = await client.campaigns.update('my-account', '12345', {
-   *   cpc: 0.75,
-   *   daily_cap: 500,
+   *   name: 'DemoCampaign - Edited',
+   * });
+   * ```
+   *
+   * @example Update multiple fields including targeting
+   * ```typescript
+   * const campaign = await client.campaigns.update('my-account', '12345', {
+   *   name: 'Demo Campaign - Edited Again',
+   *   branding_text: 'New branding text',
+   *   spending_limit: 10000,
+   *   spending_limit_model: 'ENTIRE',
+   *   country_targeting: {
+   *     type: 'INCLUDE',
+   *     value: ['AU', 'GB'],
+   *   },
+   *   platform_targeting: {
+   *     type: 'INCLUDE',
+   *     value: ['TBLT', 'PHON'],
+   *   },
+   * });
+   * ```
+   *
+   * @example Pause a campaign (alternatively, use pause() method)
+   * ```typescript
+   * const campaign = await client.campaigns.update('my-account', '12345', {
+   *   is_active: false,
    * });
    * ```
    */

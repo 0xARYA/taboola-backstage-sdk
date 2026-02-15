@@ -85,9 +85,74 @@ describe('CampaignsAPI', () => {
   });
 
   describe('update', () => {
-    it('should update a campaign', async () => {
+    it('should update a single campaign field', async () => {
       const updateRequest = { cpc: 0.75 };
       const mockCampaign = { id: campaignId, cpc: 0.75 };
+      mockHttp.post.mockResolvedValue(mockCampaign);
+
+      const result = await campaignsApi.update(accountId, campaignId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockCampaign);
+    });
+
+    it('should update multiple campaign fields', async () => {
+      const updateRequest = {
+        name: 'Updated Campaign',
+        branding_text: 'New Branding',
+        spending_limit: 10000,
+        spending_limit_model: 'ENTIRE' as const,
+      };
+      const mockCampaign = { id: campaignId, ...updateRequest };
+      mockHttp.post.mockResolvedValue(mockCampaign);
+
+      const result = await campaignsApi.update(accountId, campaignId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockCampaign);
+    });
+
+    it('should update campaign targeting fields', async () => {
+      const updateRequest = {
+        country_targeting: {
+          type: 'INCLUDE' as const,
+          value: ['AU', 'GB'],
+        },
+        platform_targeting: {
+          type: 'INCLUDE' as const,
+          value: ['TBLT', 'PHON'],
+        },
+      };
+      const mockCampaign = { id: campaignId, ...updateRequest };
+      mockHttp.post.mockResolvedValue(mockCampaign);
+
+      const result = await campaignsApi.update(accountId, campaignId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockCampaign);
+    });
+
+    it('should update campaign activity schedule', async () => {
+      const updateRequest = {
+        activity_schedule: {
+          mode: 'CUSTOM' as const,
+          rules: [
+            { day: 'MONDAY', from_hour: 9, until_hour: 17 },
+            { day: 'TUESDAY', from_hour: 9, until_hour: 17 },
+          ],
+          time_zone: 'America/New_York',
+        },
+      };
+      const mockCampaign = { id: campaignId, ...updateRequest };
       mockHttp.post.mockResolvedValue(mockCampaign);
 
       const result = await campaignsApi.update(accountId, campaignId, updateRequest);

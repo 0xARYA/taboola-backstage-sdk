@@ -1,6 +1,6 @@
 {
   "name": "taboola-backstage-sdk",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "TypeScript SDK for Taboola Backstage API - Campaign management, reporting, and audience targeting",
   "author": "Arya Alikhani",
   "license": "MIT",

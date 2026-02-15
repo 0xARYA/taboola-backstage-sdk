@@ -83,9 +83,71 @@ describe('ItemsAPI', () => {
   });
 
   describe('update', () => {
-    it('should update an item', async () => {
+    it('should update a single item field', async () => {
       const updateRequest = { title: 'Updated Title' };
       const mockItem = { id: itemId, title: 'Updated Title' };
+      mockHttp.post.mockResolvedValue(mockItem);
+
+      const result = await itemsApi.update(accountId, campaignId, itemId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/items/${itemId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockItem);
+    });
+
+    it('should update multiple item fields', async () => {
+      const updateRequest = {
+        title: 'Updated Title',
+        url: 'https://example.com/new-page',
+        description: 'New description',
+        is_active: true,
+      };
+      const mockItem = { id: itemId, ...updateRequest };
+      mockHttp.post.mockResolvedValue(mockItem);
+
+      const result = await itemsApi.update(accountId, campaignId, itemId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/items/${itemId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockItem);
+    });
+
+    it('should update a motion ad with performance video data', async () => {
+      const updateRequest = {
+        title: 'Motion Ad',
+        performance_video_data: {
+          video_url: 'https://example.com/video.mp4',
+          fallback_url: 'https://example.com/fallback.jpg',
+        },
+      };
+      const mockItem = { id: itemId, ...updateRequest };
+      mockHttp.post.mockResolvedValue(mockItem);
+
+      const result = await itemsApi.update(accountId, campaignId, itemId, updateRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/items/${itemId}`,
+        updateRequest
+      );
+      expect(result).toEqual(mockItem);
+    });
+
+    it('should update item with verification pixel and viewability tag', async () => {
+      const updateRequest = {
+        verification_pixel: {
+          type: 'MOAT',
+          url: 'https://example.com/pixel',
+        },
+        viewability_tag: {
+          type: 'IAS',
+          value: 'tag-value',
+        },
+      };
+      const mockItem = { id: itemId, ...updateRequest };
       mockHttp.post.mockResolvedValue(mockItem);
 
       const result = await itemsApi.update(accountId, campaignId, itemId, updateRequest);
