@@ -16,6 +16,8 @@ import type {
   UpdateContextualTargetingRequest,
   FirstPartyAudienceTargeting,
   UpdateFirstPartyAudienceTargetingRequest,
+  MarkingLabelsTargeting,
+  UpdateMarkingLabelsTargetingRequest,
 } from '../types/targeting.js';
 
 /**
@@ -296,6 +298,60 @@ export class TargetingAPI {
   ): Promise<FirstPartyAudienceTargeting> {
     return this.http.post<FirstPartyAudienceTargeting>(
       `${accountId}/campaigns/${campaignId}/targeting/my_audiences`,
+      targeting
+    );
+  }
+
+  // ===== Marking Labels Targeting =====
+
+  /**
+   * Get marking labels (pixel retargeting) targeting for a campaign
+   *
+   * Marking labels allow you to target users based on pixel-tracked
+   * behavior using custom labels.
+   *
+   * @param accountId - Account ID
+   * @param campaignId - Campaign ID
+   * @returns Marking labels targeting configuration
+   *
+   * @example
+   * ```typescript
+   * const targeting = await client.targeting.getMarkingLabels('my-account', '12345');
+   * console.log('Labels:', targeting.collection);
+   * ```
+   */
+  async getMarkingLabels(
+    accountId: string,
+    campaignId: string
+  ): Promise<MarkingLabelsTargeting> {
+    return this.http.get<MarkingLabelsTargeting>(
+      `${accountId}/campaigns/${campaignId}/targeting/marking_labels`
+    );
+  }
+
+  /**
+   * Update marking labels targeting for a campaign
+   *
+   * @param accountId - Account ID
+   * @param campaignId - Campaign ID
+   * @param targeting - Marking labels targeting configuration
+   * @returns Updated targeting configuration
+   *
+   * @example
+   * ```typescript
+   * await client.targeting.updateMarkingLabels('my-account', '12345', {
+   *   type: 'EXISTS',
+   *   collection: ['label-1', 'label-2'],
+   * });
+   * ```
+   */
+  async updateMarkingLabels(
+    accountId: string,
+    campaignId: string,
+    targeting: UpdateMarkingLabelsTargetingRequest
+  ): Promise<MarkingLabelsTargeting> {
+    return this.http.post<MarkingLabelsTargeting>(
+      `${accountId}/campaigns/${campaignId}/targeting/marking_labels`,
       targeting
     );
   }

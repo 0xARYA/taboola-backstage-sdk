@@ -6,10 +6,12 @@ import type { HttpClient } from '../utils/http.js';
 import type {
   BulkCampaignUpdateRequest,
   Campaign,
+  CampaignBaseListResponse,
   CampaignListResponse,
   CampaignPatchRequest,
   CampaignReachEstimatorRequest,
   CampaignReachEstimatorResponse,
+  CampaignTargetingCollection,
   CreateCampaignRequest,
   UpdateCampaignRequest,
 } from '../types/index.js';
@@ -68,6 +70,26 @@ export class CampaignsAPI {
     const path = `${accountId}/campaigns/${query ? `?${query}` : ''}`;
 
     return this.http.get<CampaignListResponse>(path);
+  }
+
+  /**
+   * List all campaigns with base (partial) fields only
+   *
+   * Returns a lighter-weight response with fewer fields per campaign.
+   * Useful for listing/overview pages where full campaign data is not needed.
+   *
+   * @param accountId - Account ID
+   *
+   * @example
+   * ```typescript
+   * const { results } = await client.campaigns.listBase('my-account');
+   * for (const campaign of results) {
+   *   console.log(campaign.name, campaign.status);
+   * }
+   * ```
+   */
+  async listBase(accountId: string): Promise<CampaignBaseListResponse> {
+    return this.http.get<CampaignBaseListResponse>(`${accountId}/campaigns/base`);
   }
 
   /**
@@ -221,7 +243,7 @@ export class CampaignsAPI {
     accountId: string,
     updates: BulkCampaignUpdateRequest
   ): Promise<CampaignListResponse> {
-    return this.http.post<CampaignListResponse>(`${accountId}/campaigns/bulk`, updates);
+    return this.http.put<CampaignListResponse>(`${accountId}/campaigns/bulk`, updates);
   }
 
   /**
@@ -288,6 +310,29 @@ export class CampaignsAPI {
     return this.http.post<CampaignReachEstimatorResponse>(
       `${accountId}/campaigns/reach-estimate`,
       params
+    );
+  }
+
+  /**
+   * Get publisher targeting whitelist for a campaign
+   *
+   * Returns the list of publishers that are whitelisted for this campaign.
+   *
+   * @param accountId - Account ID
+   * @param campaignId - Campaign ID
+   *
+   * @example
+   * ```typescript
+   * const whitelist = await client.campaigns.getTargetingWhitelist('my-account', '12345');
+   * console.log('Whitelisted publishers:', whitelist.value);
+   * ```
+   */
+  async getTargetingWhitelist(
+    accountId: string,
+    campaignId: string
+  ): Promise<CampaignTargetingCollection> {
+    return this.http.get<CampaignTargetingCollection>(
+      `${accountId}/campaigns/${campaignId}/targeting/publisher_targeting/whitelist`
     );
   }
 }

@@ -5,7 +5,7 @@
  * Campaign Summary, Top Campaign Content, and Realtime reports.
  */
 
-import type { ReportDimension } from './common.js';
+import type { ReportDimension, RealtimeCampaignDimension, RealtimeAdsDimension } from './common.js';
 
 /**
  * Common report parameters
@@ -29,6 +29,10 @@ export interface CampaignSummaryReportParams extends BaseReportParams {
   platform?: string | undefined;
   /** Include custom conversion columns (comma-separated rule names or 'all') */
   include_conversions?: string | undefined;
+  /** Include multi-conversion data */
+  include_multi_conversions?: boolean | undefined;
+  /** Filter by partner name */
+  partner_name?: string | undefined;
 }
 
 /**
@@ -44,11 +48,47 @@ export interface TopCampaignContentReportParams extends BaseReportParams {
 }
 
 /**
- * Realtime Report parameters
+ * Realtime Campaign Report parameters
+ *
+ * Dates use datetime format: e.g. '2023-03-28T00:00:00'
  */
-export interface RealtimeReportParams {
-  /** Filter by specific campaign ID */
+export interface RealtimeCampaignReportParams {
+  /** Start datetime, e.g. '2023-03-28T00:00:00' */
+  start_date: string;
+  /** End datetime, e.g. '2023-03-28T23:59:59' */
+  end_date: string;
+  /** 1 or more numeric Campaign IDs, comma-separated. E.g. '101,102,103' */
   campaign?: string | undefined;
+  /** 1 or more platform enums, comma-separated. Possible values: DESK, PHON, TBLT */
+  platform?: string | undefined;
+  /** 1 or more 2-letter ISO-3166 country codes, comma-separated */
+  country?: string | undefined;
+  /** 1 or more numeric Site IDs (publisher Account IDs), comma-separated */
+  site_id?: string | undefined;
+  /** If true, returns additional campaign columns for by_campaign dimension (limited to 1,000 rows) */
+  fetch_config?: boolean | undefined;
+}
+
+/**
+ * Realtime Ads Report parameters
+ *
+ * Dates use datetime format: e.g. '2023-03-28T00:00:00'
+ */
+export interface RealtimeAdsReportParams {
+  /** Start datetime, e.g. '2023-03-28T00:00:00' */
+  start_date: string;
+  /** End datetime, e.g. '2023-03-28T23:59:59' */
+  end_date: string;
+  /** 1 or more numeric Item IDs (Ad IDs), comma-separated. E.g. '1001,1002,1003' */
+  item: string;
+  /** 1 or more numeric Campaign IDs, comma-separated */
+  campaign?: string | undefined;
+  /** 1 or more platform enums, comma-separated. Possible values: DESK, PHON, TBLT */
+  platform?: string | undefined;
+  /** 1 or more 2-letter ISO-3166 country codes, comma-separated */
+  country?: string | undefined;
+  /** 1 or more numeric Site IDs (publisher Account IDs), comma-separated */
+  site_id?: string | undefined;
 }
 
 /**
@@ -70,22 +110,38 @@ export interface CampaignSummaryRow {
   /** Date of the data (for day/week/month dimensions) */
   date?: string | undefined;
   date_end_period?: string | undefined;
+  /** Hour of day (for by_hour_of_day dimension) */
+  hour_of_day?: string | undefined;
   /** Campaign ID (for campaign dimension) */
   campaign?: string | undefined;
   campaign_name?: string | undefined;
+  /** Content provider (for content_provider_breakdown dimension) */
+  content_provider?: string | undefined;
+  content_provider_name?: string | undefined;
   /** Site name (for site dimension) */
   site?: string | undefined;
+  site_name?: string | undefined;
   site_id?: string | undefined;
   /** Country code (for country dimension) */
   country?: string | undefined;
+  country_name?: string | undefined;
+  /** Region (for region_breakdown dimension) */
+  region?: string | undefined;
+  /** DMA (for dma_breakdown dimension) */
+  dma?: string | undefined;
   /** Platform (for platform dimension) */
   platform?: string | undefined;
+  platform_name?: string | undefined;
+  /** Blocking level */
+  blocking_level?: string | undefined;
   /** Number of clicks */
   clicks: number;
   /** Number of impressions */
   impressions: number;
   /** Number of visible impressions */
   visible_impressions: number;
+  /** Impression percentage */
+  impressions_pct?: string | undefined;
   /** Total spend */
   spent: number;
   /** Click-through rate */
@@ -124,6 +180,12 @@ export interface CampaignSummaryRow {
   cpa_conversion_rate_clicks: number;
   /** Conversion rate from views */
   cpa_conversion_rate_views: number;
+  /** Partner name (for user_segment_breakdown dimension) */
+  partner_name?: string | undefined;
+  /** Audience name (for user_segment_breakdown dimension) */
+  audience_name?: string | undefined;
+  /** Data partner audience ID (for user_segment_breakdown dimension) */
+  data_partner_audience_id?: string | undefined;
   /** Custom conversion columns (dynamic based on include_conversions) */
   [key: string]: unknown;
 }
@@ -149,9 +211,14 @@ export interface TopCampaignContentRow {
   item_name: string;
   /** Thumbnail URL */
   thumbnail_url: string;
+  /** Landing page URL */
+  url: string;
   /** Campaign ID */
   campaign: string;
   campaign_name: string;
+  /** Content provider (publisher) */
+  content_provider?: string | undefined;
+  content_provider_name?: string | undefined;
   /** Metrics */
   clicks: number;
   impressions: number;
@@ -163,6 +230,10 @@ export interface TopCampaignContentRow {
   vcpm: number;
   cpc: number;
   currency: string;
+  /** Number of conversion actions */
+  actions: number;
+  /** Conversion rate */
+  cvr: number;
   conversions_value: number;
   roas: number;
   cpa: number;
@@ -176,50 +247,114 @@ export interface TopCampaignContentRow {
  * Realtime Campaign Report response
  */
 export interface RealtimeCampaignReport {
-  timestamp: string;
+  'last-used-rawdata-update-time': string;
+  'last-used-rawdata-update-time-gmt-millisec': number;
+  timezone: string;
   results: RealtimeCampaignRow[];
+  recordCount: number;
+  metadata: ReportMetadata;
 }
 
 /**
  * Realtime campaign report row
+ *
+ * Fields present depend on the chosen dimension.
  */
 export interface RealtimeCampaignRow {
-  campaign: string;
-  campaign_name: string;
-  status: string;
+  /** Hour (for by_hour dimensions) */
+  hour?: string | undefined;
+  /** Campaign ID (for by_campaign dimensions) */
+  campaign?: string | undefined;
+  campaign_name?: string | undefined;
+  /** Site name (for by_site dimensions) */
+  site?: string | undefined;
+  site_id?: string | undefined;
+  /** Country code (for by_country dimensions) */
+  country?: string | undefined;
+  /** Platform (for by_platform dimensions) */
+  platform?: string | undefined;
+  /** Number of clicks */
   clicks: number;
+  /** Number of impressions */
   impressions: number;
+  /** Number of visible impressions */
+  visible_impressions: number;
+  /** Total spend */
   spent: number;
+  /** Click-through rate */
   ctr: number;
+  /** Visible click-through rate */
+  vctr: number;
+  /** Cost per thousand impressions */
+  cpm: number;
+  /** Visible cost per thousand impressions */
+  vcpm: number;
+  /** Cost per click */
   cpc: number;
-  conversions: number;
+  /** Currency code */
   currency: string;
+  /** Number of conversion actions */
+  cpa_actions_num: number;
+  /** Conversion rate */
+  cpa_conversion_rate: number;
+  /** Cost per action */
+  cpa: number;
+  /** Dynamic fields (e.g. from fetch_config) */
+  [key: string]: unknown;
 }
 
 /**
  * Realtime Ads Report response
  */
 export interface RealtimeAdsReport {
-  timestamp: string;
+  'last-used-rawdata-update-time': string;
+  'last-used-rawdata-update-time-gmt-millisec': number;
+  timezone: string;
   results: RealtimeAdsRow[];
+  recordCount: number;
+  metadata: ReportMetadata;
 }
 
 /**
  * Realtime ads report row
  */
 export interface RealtimeAdsRow {
+  /** Item (ad) ID */
   item: string;
   item_name: string;
+  /** Thumbnail URL */
+  thumbnail_url: string;
+  /** Campaign ID */
   campaign: string;
   campaign_name: string;
-  status: string;
+  /** Number of clicks */
   clicks: number;
+  /** Number of impressions */
   impressions: number;
+  /** Number of visible impressions */
+  visible_impressions: number;
+  /** Total spend */
   spent: number;
+  /** Click-through rate */
   ctr: number;
+  /** Visible click-through rate */
+  vctr: number;
+  /** Cost per thousand impressions */
+  cpm: number;
+  /** Visible cost per thousand impressions */
+  vcpm: number;
+  /** Cost per click */
   cpc: number;
-  conversions: number;
+  /** Currency code */
   currency: string;
+  /** Number of conversion actions */
+  cpa_actions_num: number;
+  /** Conversion rate */
+  cpa_conversion_rate: number;
+  /** Cost per action */
+  cpa: number;
+  /** Dynamic fields */
+  [key: string]: unknown;
 }
 
 /**
@@ -246,6 +381,6 @@ export interface ReportField {
 export type ReportDataType = 'DATE' | 'STRING' | 'NUMERIC' | 'CURRENCY' | 'PERCENTAGE';
 
 /**
- * Re-export ReportDimension for convenience
+ * Re-export dimension types for convenience
  */
-export type { ReportDimension };
+export type { RealtimeAdsDimension, RealtimeCampaignDimension, ReportDimension };

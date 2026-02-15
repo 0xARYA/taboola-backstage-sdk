@@ -115,3 +115,19 @@ export interface UpdateFirstPartyAudienceTargetingRequest {
   type: MultiTargetingState;
   collection: AudienceSegment[];
 }
+
+/**
+ * Marking labels (pixel retargeting) targeting configuration
+ */
+export interface MarkingLabelsTargeting {
+  type: MultiTargetingState;
+  collection: string[];
+}
+
+/**
+ * Request to update marking labels targeting
+ */
+export interface UpdateMarkingLabelsTargetingRequest {
+  type: MultiTargetingState;
+  collection: string[];
+}

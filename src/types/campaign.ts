@@ -220,6 +220,16 @@ export interface Campaign {
   policy_review: PolicyReview;
   /** Account currency */
   currency?: CurrencyCode;
+  /** Campaign type (ReadOnly) */
+  type?: string;
+  /** Campaign learning/optimization state (ReadOnly) */
+  learning_state?: string;
+  /** Campaign groups (ReadOnly) */
+  campaign_groups?: string[];
+  /** Start date in UTC (ReadOnly) */
+  start_date_in_utc?: DateString | null;
+  /** End date in UTC (ReadOnly) */
+  end_date_in_utc?: DateString | null;
 }
 
 /**
@@ -375,4 +385,58 @@ export interface CampaignReachEstimatorResponse {
   estimated_clicks: number;
   /** Estimated daily reach */
   estimated_reach: number;
+}
+
+/**
+ * Partial campaign entity with base fields only
+ *
+ * Returned by the /campaigns/base endpoint for lighter-weight listing.
+ */
+export interface CampaignBase {
+  /** Unique campaign ID */
+  id: string;
+  /** Advertiser account ID */
+  advertiser_id: string;
+  /** Advertiser name */
+  advertiser_name?: string;
+  /** Advertiser description */
+  advertiser_description?: string;
+  /** Campaign name */
+  name: string;
+  /** Branding text */
+  branding_text: string;
+  /** Policy/approval state */
+  policy_state?: string;
+  /** Campaign status */
+  status: CampaignStatus;
+  /** Creation time */
+  create_time?: string;
+  /** Total amount spent */
+  total_spent?: number;
+  /** Campaign type */
+  type?: string;
+  /** Marketing objective */
+  marketing_objective?: MarketingObjective;
+  /** Campaign groups */
+  campaign_groups?: string[];
+}
+
+/**
+ * Campaign base list response
+ */
+export interface CampaignBaseListResponse {
+  results: CampaignBase[];
+  metadata?: {
+    total?: number;
+    count?: number;
+  };
+}
+
+/**
+ * Campaign targeting collection (e.g., publisher whitelist)
+ */
+export interface CampaignTargetingCollection {
+  type: string;
+  value: string[];
+  href?: string | null;
 }

@@ -23,6 +23,8 @@ export type {
   PaginationParams,
   PlatformType,
   PricingModel,
+  RealtimeAdsDimension,
+  RealtimeCampaignDimension,
   ReportDimension,
   SpendingLimitModel,
   TargetingType,
@@ -51,10 +53,13 @@ export type {
   BulkCampaignUpdate,
   BulkCampaignUpdateRequest,
   Campaign,
+  CampaignBase,
+  CampaignBaseListResponse,
   CampaignListResponse,
   CampaignPatchRequest,
   CampaignReachEstimatorRequest,
   CampaignReachEstimatorResponse,
+  CampaignTargetingCollection,
   CreateCampaignRequest,
   ExternalBrandSafety,
   PatchOperation,
@@ -128,11 +133,13 @@ export type {
   ContextualSegmentValue,
   ContextualTargeting,
   FirstPartyAudienceTargeting,
+  MarkingLabelsTargeting,
   PostalCodeTargeting,
   PostalCodeValue,
   UpdateAudienceTargetingRequest,
   UpdateContextualTargetingRequest,
   UpdateFirstPartyAudienceTargetingRequest,
+  UpdateMarkingLabelsTargetingRequest,
   UpdatePostalCodeTargetingRequest,
 } from './targeting.js';
 
@@ -174,16 +181,28 @@ export type {
   UpdateCustomAudienceRuleRequest,
 } from './pixel.js';
 
+// Shared Budget types
+export type {
+  CreateSharedBudgetRequest,
+  SharedBudget,
+  SharedBudgetBase,
+  SharedBudgetBaseListResponse,
+  SharedBudgetCampaign,
+  SharedBudgetCampaignAttribute,
+  UpdateSharedBudgetRequest,
+} from './shared-budget.js';
+
 // Report types
 export type {
   CampaignSummaryReport,
   CampaignSummaryReportParams,
   CampaignSummaryRow,
   RealtimeAdsReport,
+  RealtimeAdsReportParams,
   RealtimeAdsRow,
   RealtimeCampaignReport,
+  RealtimeCampaignReportParams,
   RealtimeCampaignRow,
-  RealtimeReportParams,
   ReportMetadata,
   TopCampaignContentReport,
   TopCampaignContentReportParams,

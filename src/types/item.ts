@@ -115,6 +115,16 @@ export interface CampaignItem {
   rss_url?: string;
   /** Parent item ID (for RSS children) */
   parent_id?: string;
+  /** Learning/optimization state (ReadOnly) */
+  learning_state?: string;
+  /** App install configuration */
+  app_install?: Record<string, unknown>;
+  /** Rating configuration */
+  rating?: Record<string, unknown>;
+  /** Logo configuration */
+  logo?: Record<string, unknown>;
+  /** Disclaimer text */
+  disclaimer?: string;
 }
 
 /**

@@ -16,6 +16,7 @@ import { CombinedAudiencesAPI } from './api/combined-audiences.js';
 import { FirstPartyAudiencesAPI } from './api/first-party-audiences.js';
 import { PixelAPI } from './api/pixel.js';
 import { ReportsAPI } from './api/reports.js';
+import { SharedBudgetAPI } from './api/shared-budget.js';
 import type { TaboolaConfig } from './types/index.js';
 
 /**
@@ -99,6 +100,11 @@ export class TaboolaClient {
   readonly pixel: PixelAPI;
 
   /**
+   * Shared budget management API
+   */
+  readonly sharedBudgets: SharedBudgetAPI;
+
+  /**
    * Reports and analytics API
    */
   readonly reports: ReportsAPI;
@@ -147,6 +153,7 @@ export class TaboolaClient {
     this.combinedAudiences = new CombinedAudiencesAPI(this.httpClient);
     this.firstPartyAudiences = new FirstPartyAudiencesAPI(this.httpClient);
     this.pixel = new PixelAPI(this.httpClient);
+    this.sharedBudgets = new SharedBudgetAPI(this.httpClient);
     this.reports = new ReportsAPI(this.httpClient);
   }
 

@@ -155,8 +155,24 @@ describe('CampaignsAPI', () => {
     });
   });
 
+  describe('listBase', () => {
+    it('should list campaigns with base fields', async () => {
+      const mockResponse = {
+        results: [
+          { id: 'campaign-1', name: 'Campaign 1', status: 'RUNNING' },
+        ],
+      };
+      mockHttp.get.mockResolvedValue(mockResponse);
+
+      const result = await campaignsApi.listBase(accountId);
+
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/campaigns/base`);
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
   describe('bulkUpdate', () => {
-    it('should bulk update campaigns', async () => {
+    it('should bulk update campaigns via PUT', async () => {
       const bulkRequest = {
         campaigns: [
           { campaign_id: 'campaign-1', update: { is_active: false } },
@@ -164,11 +180,11 @@ describe('CampaignsAPI', () => {
         ],
       };
       const mockResponse = { results: [] };
-      mockHttp.post.mockResolvedValue(mockResponse);
+      mockHttp.put.mockResolvedValue(mockResponse);
 
       const result = await campaignsApi.bulkUpdate(accountId, bulkRequest);
 
-      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/campaigns/bulk`, bulkRequest);
+      expect(mockHttp.put).toHaveBeenCalledWith(`${accountId}/campaigns/bulk`, bulkRequest);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -188,6 +204,20 @@ describe('CampaignsAPI', () => {
         patchRequest
       );
       expect(result).toEqual(mockCampaign);
+    });
+  });
+
+  describe('getTargetingWhitelist', () => {
+    it('should get publisher targeting whitelist', async () => {
+      const mockResponse = { type: 'INCLUDE', value: ['pub-123', 'pub-456'] };
+      mockHttp.get.mockResolvedValue(mockResponse);
+
+      const result = await campaignsApi.getTargetingWhitelist(accountId, campaignId);
+
+      expect(mockHttp.get).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/targeting/publisher_targeting/whitelist`
+      );
+      expect(result).toEqual(mockResponse);
     });
   });
 });

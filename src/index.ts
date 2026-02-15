@@ -20,6 +20,7 @@ export { TargetingAPI } from './api/targeting.js';
 export { CombinedAudiencesAPI } from './api/combined-audiences.js';
 export { FirstPartyAudiencesAPI } from './api/first-party-audiences.js';
 export { PixelAPI } from './api/pixel.js';
+export { SharedBudgetAPI } from './api/shared-budget.js';
 export { ReportsAPI } from './api/reports.js';
 
 // Auth (for advanced use cases)
@@ -62,6 +63,8 @@ export type {
   PaginationParams,
   PlatformType,
   PricingModel,
+  RealtimeAdsDimension,
+  RealtimeCampaignDimension,
   ReportDimension,
   SpendingLimitModel,
   TargetingType,
@@ -85,10 +88,13 @@ export type {
   BulkCampaignUpdate,
   BulkCampaignUpdateRequest,
   Campaign,
+  CampaignBase,
+  CampaignBaseListResponse,
   CampaignListResponse,
   CampaignPatchRequest,
   CampaignReachEstimatorRequest,
   CampaignReachEstimatorResponse,
+  CampaignTargetingCollection,
   CreateCampaignRequest,
   ExternalBrandSafety,
   PatchOperation,
@@ -150,11 +156,13 @@ export type {
   ContextualSegmentValue,
   ContextualTargeting,
   FirstPartyAudienceTargeting,
+  MarkingLabelsTargeting,
   PostalCodeTargeting,
   PostalCodeValue,
   UpdateAudienceTargetingRequest,
   UpdateContextualTargetingRequest,
   UpdateFirstPartyAudienceTargetingRequest,
+  UpdateMarkingLabelsTargetingRequest,
   UpdatePostalCodeTargetingRequest,
   // Audience types
   AddRemoveUsersRequest,
@@ -188,15 +196,24 @@ export type {
   EffectType,
   UpdateConversionRuleRequest,
   UpdateCustomAudienceRuleRequest,
+  // Shared Budget types
+  CreateSharedBudgetRequest,
+  SharedBudget,
+  SharedBudgetBase,
+  SharedBudgetBaseListResponse,
+  SharedBudgetCampaign,
+  SharedBudgetCampaignAttribute,
+  UpdateSharedBudgetRequest,
   // Report types
   CampaignSummaryReport,
   CampaignSummaryReportParams,
   CampaignSummaryRow,
   RealtimeAdsReport,
+  RealtimeAdsReportParams,
   RealtimeAdsRow,
   RealtimeCampaignReport,
+  RealtimeCampaignReportParams,
   RealtimeCampaignRow,
-  RealtimeReportParams,
   ReportMetadata,
   TopCampaignContentReport,
   TopCampaignContentReportParams,

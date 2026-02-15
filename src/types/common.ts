@@ -186,20 +186,58 @@ export type BrandSafetyProvider = 'IAS' | 'DV' | 'MOAT' | 'NONE';
  */
 export type ReportDimension =
   | 'day'
+  | 'by_hour_of_day'
   | 'week'
   | 'month'
-  | 'campaign'
-  | 'campaign_day'
+  | 'content_provider_breakdown'
+  | 'campaign_breakdown'
+  | 'site_breakdown'
+  | 'country_breakdown'
+  | 'region_breakdown'
+  | 'dma_breakdown'
+  | 'platform_breakdown'
+  | 'campaign_day_breakdown'
+  | 'campaign_site_day_breakdown'
+  | 'user_segment_breakdown'
   | 'campaign_week'
   | 'campaign_month'
-  | 'site'
   | 'site_day'
-  | 'country'
   | 'country_day'
-  | 'platform'
   | 'platform_day'
   | 'browser'
   | 'browser_day'
   | 'os_family'
   | 'os_family_day'
-  | 'item_breakdown';
+  | 'item_breakdown'
+  // Shorthand aliases used by the API
+  | 'campaign'
+  | 'site'
+  | 'country'
+  | 'platform';
+
+/**
+ * Realtime Campaign Report dimension types
+ *
+ * @see https://developers.taboola.com/backstage-api/reference/realtime-campaign-report
+ */
+export type RealtimeCampaignDimension =
+  | 'by_hour'
+  | 'by_campaign'
+  | 'by_site'
+  | 'by_country'
+  | 'by_platform'
+  | 'by_campaign_by_hour'
+  | 'by_campaign_by_site'
+  | 'by_campaign_by_country'
+  | 'by_campaign_by_platform'
+  | 'by_campaign_by_country_by_platform'
+  | 'by_platform_by_country';
+
+/**
+ * Realtime Ads Report dimension types
+ *
+ * @see https://developers.taboola.com/backstage-api/reference/realtime-ads-report
+ */
+export type RealtimeAdsDimension =
+  | 'by_item'
+  | 'by_item_by_smallest_time_bucket';

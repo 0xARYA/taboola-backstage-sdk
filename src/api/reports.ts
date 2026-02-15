@@ -6,15 +6,16 @@
  */
 
 import type { HttpClient } from '../utils/http.js';
-import type { ReportDimension } from '../types/common.js';
+import type { RealtimeAdsDimension, RealtimeCampaignDimension, ReportDimension } from '../types/common.js';
 import type {
   CampaignSummaryReport,
   CampaignSummaryReportParams,
+  RealtimeAdsReport,
+  RealtimeAdsReportParams,
+  RealtimeCampaignReport,
+  RealtimeCampaignReportParams,
   TopCampaignContentReport,
   TopCampaignContentReportParams,
-  RealtimeCampaignReport,
-  RealtimeAdsReport,
-  RealtimeReportParams,
 } from '../types/report.js';
 
 /**
@@ -85,6 +86,12 @@ export class ReportsAPI {
     if (params.include_conversions) {
       searchParams.set('include_conversions', params.include_conversions);
     }
+    if (params.include_multi_conversions !== undefined) {
+      searchParams.set('include_multi_conversions', String(params.include_multi_conversions));
+    }
+    if (params.partner_name) {
+      searchParams.set('partner_name', params.partner_name);
+    }
 
     return this.http.get<CampaignSummaryReport>(
       `${accountId}/reports/campaign-summary/dimensions/${dimension}?${searchParams.toString()}`
@@ -140,74 +147,118 @@ export class ReportsAPI {
   /**
    * Get Realtime Campaign Report
    *
-   * The Realtime Campaign report shows current day performance metrics
-   * for campaigns, updated frequently throughout the day.
+   * Provides performance data for campaigns in (near) real time.
+   * Metrics and amounts are not accurate for billing.
+   *
+   * Rate limit: 10 requests per minute (429 returned if exceeded).
    *
    * @param accountId - Account ID
-   * @param params - Optional filter parameters
+   * @param dimension - Report dimension (e.g. 'by_hour', 'by_campaign')
+   * @param params - Report parameters including date range and filters
    * @returns Realtime campaign report
    *
    * @example
    * ```typescript
-   * const report = await client.reports.realtimeCampaign('my-account');
-   * console.log(`Data as of: ${report.timestamp}`);
+   * const report = await client.reports.realtimeCampaign('my-account', 'by_campaign', {
+   *   start_date: '2024-01-15T00:00:00',
+   *   end_date: '2024-01-15T23:59:59',
+   * });
    *
-   * for (const campaign of report.results) {
-   *   console.log(`${campaign.campaign_name}: ${campaign.clicks} clicks today`);
+   * for (const row of report.results) {
+   *   console.log(`${row.campaign_name}: ${row.clicks} clicks, $${row.spent} spent`);
    * }
+   *
+   * // With filters
+   * const filtered = await client.reports.realtimeCampaign('my-account', 'by_hour', {
+   *   start_date: '2024-01-15T00:00:00',
+   *   end_date: '2024-01-15T23:59:59',
+   *   campaign: '101,102',
+   *   platform: 'DESK,PHON',
+   *   country: 'US',
+   * });
    * ```
    */
   async realtimeCampaign(
     accountId: string,
-    params?: RealtimeReportParams
+    dimension: RealtimeCampaignDimension,
+    params: RealtimeCampaignReportParams
   ): Promise<RealtimeCampaignReport> {
     const searchParams = new URLSearchParams();
+    searchParams.set('start_date', params.start_date);
+    searchParams.set('end_date', params.end_date);
 
-    if (params?.campaign) {
+    if (params.campaign) {
       searchParams.set('campaign', params.campaign);
     }
+    if (params.platform) {
+      searchParams.set('platform', params.platform);
+    }
+    if (params.country) {
+      searchParams.set('country', params.country);
+    }
+    if (params.site_id) {
+      searchParams.set('site_id', params.site_id);
+    }
+    if (params.fetch_config !== undefined) {
+      searchParams.set('fetch_config', String(params.fetch_config));
+    }
 
-    const queryString = searchParams.toString();
-    const path = `${accountId}/reports/realtime/campaign-summary`;
-    const url = queryString ? `${path}?${queryString}` : path;
-
-    return this.http.get<RealtimeCampaignReport>(url);
+    return this.http.get<RealtimeCampaignReport>(
+      `${accountId}/reports/realtime-campaign-summary/dimensions/${dimension}?${searchParams.toString()}`
+    );
   }
 
   /**
-   * Get Realtime Ads Report
+   * Get Realtime Ads Report (Top Campaign Content)
    *
-   * The Realtime Ads report shows current day performance metrics
-   * for individual items (ads), updated frequently throughout the day.
+   * Provides performance data for ads in (near) real time.
+   * Metrics and amounts are not accurate for billing.
+   *
+   * Rate limit: 10 requests per minute (429 returned if exceeded).
    *
    * @param accountId - Account ID
-   * @param params - Optional filter parameters
+   * @param dimension - Report dimension ('by_item' or 'by_item_by_smallest_time_bucket')
+   * @param params - Report parameters including date range, item IDs, and filters
    * @returns Realtime ads report
    *
    * @example
    * ```typescript
-   * const report = await client.reports.realtimeAds('my-account');
-   * console.log(`Data as of: ${report.timestamp}`);
+   * const report = await client.reports.realtimeAds('my-account', 'by_item', {
+   *   start_date: '2024-01-15T00:00:00',
+   *   end_date: '2024-01-15T23:59:59',
+   *   item: '1001,1002,1003',
+   * });
    *
-   * for (const ad of report.results) {
-   *   console.log(`${ad.item_name}: ${ad.clicks} clicks, ${ad.impressions} impressions`);
+   * for (const row of report.results) {
+   *   console.log(`${row.item_name}: ${row.clicks} clicks, ${row.impressions} impressions`);
    * }
    * ```
    */
   async realtimeAds(
     accountId: string,
-    params?: RealtimeReportParams
+    dimension: RealtimeAdsDimension,
+    params: RealtimeAdsReportParams
   ): Promise<RealtimeAdsReport> {
     const searchParams = new URLSearchParams();
+    searchParams.set('start_date', params.start_date);
+    searchParams.set('end_date', params.end_date);
+    searchParams.set('item', params.item);
 
-    if (params?.campaign) {
+    if (params.campaign) {
       searchParams.set('campaign', params.campaign);
     }
+    if (params.platform) {
+      searchParams.set('platform', params.platform);
+    }
+    if (params.country) {
+      searchParams.set('country', params.country);
+    }
+    if (params.site_id) {
+      searchParams.set('site_id', params.site_id);
+    }
 
-    const queryString = searchParams.toString();
-    const path = `${accountId}/reports/realtime/ads`;
-    const url = queryString ? `${path}?${queryString}` : path;
-
-    return this.http.get<RealtimeAdsReport>(url);
+    return this.http.get<RealtimeAdsReport>(
+      `${accountId}/reports/realtime-top-campaign-content/dimensions/${dimension}?${searchParams.toString()}`
+    );
   }
 }
