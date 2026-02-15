@@ -131,6 +131,12 @@ await client.campaigns.bulkUpdate('account-id', {
     { campaign_id: '456', update: { cpc: 0.60 } },
   ],
 });
+
+// List campaigns (base/lightweight)
+const { results: base } = await client.campaigns.listBase('account-id');
+
+// Get publisher targeting whitelist
+const whitelist = await client.campaigns.getTargetingWhitelist('account-id', 'campaign-id');
 ```
 
 ### Items (Ads)
@@ -207,6 +213,13 @@ await client.targeting.updateContextual('account-id', 'campaign-id', {
 
 // First party audience targeting
 const firstParty = await client.targeting.getFirstPartyAudiences('account-id', 'campaign-id');
+
+// Marking labels (pixel retargeting) targeting
+const labels = await client.targeting.getMarkingLabels('account-id', 'campaign-id');
+await client.targeting.updateMarkingLabels('account-id', 'campaign-id', {
+  type: 'EXISTS',
+  collection: ['label-1', 'label-2'],
+});
 ```
 
 ### Pixel API
@@ -266,8 +279,10 @@ const report = await client.reports.campaignSummary('account-id', 'day', {
   end_date: '2024-01-31',
 });
 
-// Available dimensions: 'day', 'week', 'month', 'campaign', 'site', 'country', 'platform'
-const byPlatform = await client.reports.campaignSummary('account-id', 'platform', {
+// Available dimensions: 'day', 'week', 'month', 'campaign_breakdown', 'site_breakdown',
+//   'country_breakdown', 'platform_breakdown', 'by_hour_of_day', 'region_breakdown',
+//   'dma_breakdown', 'campaign_day_breakdown', 'campaign_site_day_breakdown', and more
+const byPlatform = await client.reports.campaignSummary('account-id', 'platform_breakdown', {
   start_date: '2024-01-01',
   end_date: '2024-01-31',
   campaign: '12345', // Optional filter
@@ -285,9 +300,18 @@ const topContent = await client.reports.topCampaignContent('account-id', {
   limit: 100,
 });
 
-// Realtime reports
-const realtime = await client.reports.realtimeCampaign('account-id');
-const realtimeAds = await client.reports.realtimeAds('account-id');
+// Realtime campaign report (rate limited: 10 req/min)
+const realtime = await client.reports.realtimeCampaign('account-id', 'by_campaign', {
+  start_date: '2024-01-15T00:00:00',
+  end_date: '2024-01-15T23:59:59',
+});
+
+// Realtime ads report (requires item IDs)
+const realtimeAds = await client.reports.realtimeAds('account-id', 'by_item', {
+  start_date: '2024-01-15T00:00:00',
+  end_date: '2024-01-15T23:59:59',
+  item: '1001,1002',
+});
 ```
 
 ### Publishers
@@ -347,6 +371,30 @@ const audience = await client.combinedAudiences.create('account-id', {
     { type: 'INCLUDE', audience_id: 'audience-1' },
     { type: 'EXCLUDE', audience_id: 'audience-2' },
   ],
+});
+```
+
+### Shared Budgets
+
+```typescript
+// List shared budgets (base fields)
+const { results } = await client.sharedBudgets.listBase('account-id');
+
+// Get a shared budget
+const budget = await client.sharedBudgets.get('account-id', 'budget-id');
+
+// Create shared budget
+const budget = await client.sharedBudgets.create('account-id', {
+  name: 'Q1 Budget',
+  marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
+  spending_limit_model: 'MONTHLY',
+  spending_limit: 5000,
+  daily_cap: 200,
+});
+
+// Update shared budget
+await client.sharedBudgets.update('account-id', 'budget-id', {
+  spending_limit: 10000,
 });
 ```
 
@@ -416,31 +464,38 @@ All types are exported for use in your application:
 import type {
   // Core types
   Campaign,
+  CampaignBase,
   CampaignItem,
   Account,
+  SharedBudget,
 
   // Request types
   CreateCampaignRequest,
   UpdateCampaignRequest,
   CreateItemRequest,
+  CreateSharedBudgetRequest,
 
   // Report types
   CampaignSummaryReport,
   CampaignSummaryRow,
+  RealtimeCampaignReport,
 
   // Targeting types
   PostalCodeTargeting,
   AudienceTargeting,
+  MarkingLabelsTargeting,
 
   // Pixel types
   ConversionRule,
   CustomAudienceRule,
 
-  // Enums
+  // Enums / dimension types
   MarketingObjective,
   BidStrategy,
   CampaignStatus,
   ItemStatus,
+  ReportDimension,
+  RealtimeCampaignDimension,
 } from 'taboola-backstage-sdk';
 ```
 
