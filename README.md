@@ -156,14 +156,11 @@ const { results } = await client.items.list('account-id', 'campaign-id');
 // Get single item
 const item = await client.items.get('account-id', 'campaign-id', 'item-id');
 
-// Create item
+// Create item (static ad - only url accepted, starts in CRAWLING state)
 const item = await client.items.create('account-id', 'campaign-id', {
   url: 'https://example.com/landing',
-  title: 'Amazing Product - Learn More',
-  thumbnail_url: 'https://example.com/image.jpg',
-  description: 'Discover our latest offering',
-  cta: { cta_type: 'LEARN_MORE' },
 });
+// Poll until item.status changes from CRAWLING to RUNNING, then update fields
 
 // Update item (static or motion ad - partial updates supported)
 await client.items.update('account-id', 'campaign-id', 'item-id', {
@@ -187,7 +184,7 @@ await client.items.unpause('account-id', 'campaign-id', 'item-id');
 // Delete
 await client.items.delete('account-id', 'campaign-id', 'item-id');
 
-// Bulk create
+// Bulk create (supports both static and motion ads with full field set)
 const { results } = await client.items.bulkCreate('account-id', 'campaign-id', {
   items: [
     { url: 'https://example.com/1', title: 'Title 1', thumbnail_url: '...' },
@@ -491,6 +488,7 @@ import type {
   CreateCampaignRequest,
   UpdateCampaignRequest,
   CreateItemRequest,
+  BulkCreateItemData,
   CreateSharedBudgetRequest,
 
   // Report types

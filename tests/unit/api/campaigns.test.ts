@@ -65,7 +65,7 @@ describe('CampaignsAPI', () => {
   });
 
   describe('create', () => {
-    it('should create a campaign', async () => {
+    it('should create a campaign with minimal fields', async () => {
       const createRequest = {
         name: 'New Campaign',
         branding_text: 'My Brand',
@@ -73,6 +73,33 @@ describe('CampaignsAPI', () => {
         spending_limit: 1000,
         spending_limit_model: 'MONTHLY' as const,
         marketing_objective: 'DRIVE_WEBSITE_TRAFFIC' as const,
+      };
+      const mockCampaign = { id: 'new-campaign', ...createRequest };
+      mockHttp.post.mockResolvedValue(mockCampaign);
+
+      const result = await campaignsApi.create(accountId, createRequest);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/campaigns/`, createRequest);
+      expect(result).toEqual(mockCampaign);
+    });
+
+    it('should create a campaign with targeting and optional fields', async () => {
+      const createRequest = {
+        name: 'Targeted Campaign',
+        branding_text: 'My Brand',
+        cpc: 0.5,
+        spending_limit: 5000,
+        spending_limit_model: 'MONTHLY' as const,
+        marketing_objective: 'DRIVE_WEBSITE_TRAFFIC' as const,
+        country_targeting: {
+          type: 'INCLUDE' as const,
+          value: ['US', 'CA'],
+        },
+        platform_targeting: {
+          type: 'INCLUDE' as const,
+          value: ['DESK', 'PHON'],
+        },
+        start_date: '2024-06-01',
       };
       const mockCampaign = { id: 'new-campaign', ...createRequest };
       mockHttp.post.mockResolvedValue(mockCampaign);

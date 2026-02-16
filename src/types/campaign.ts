@@ -234,20 +234,51 @@ export interface Campaign {
 
 /**
  * Campaign creation request
+ *
+ * The minimal set of required fields depends on the chosen bidding strategy
+ * (and whether or not a spending limit is being set). You can optionally pass
+ * additional fields.
+ *
+ * @example Bidding strategy FIXED with spending limit
+ * ```typescript
+ * await client.campaigns.create('account-id', {
+ *   name: 'DemoCampaign',
+ *   branding_text: 'Pizza',
+ *   cpc: 0.25,
+ *   spending_limit: 1000,
+ *   spending_limit_model: 'MONTHLY',
+ *   marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
+ * });
+ * ```
+ *
+ * @example Bidding strategy MAXIMIZE_CONVERSIONS
+ * ```typescript
+ * await client.campaigns.create('account-id', {
+ *   name: 'Conversions Campaign',
+ *   branding_text: 'My Brand',
+ *   bid_strategy: 'MAX_CONVERSIONS',
+ *   cpa_goal: 5.00,
+ *   spending_limit: 5000,
+ *   spending_limit_model: 'MONTHLY',
+ *   marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
+ * });
+ * ```
  */
 export interface CreateCampaignRequest {
   /** Campaign name (required) */
   name: string;
   /** Branding text (required) */
   branding_text: string;
+  /** Marketing objective (required) */
+  marketing_objective: MarketingObjective;
+  /** Pricing model */
+  pricing_model?: PricingModel;
   /** Cost per click */
   cpc?: number;
   /** Spending limit */
   spending_limit?: number;
   /** Spending limit model */
   spending_limit_model?: SpendingLimitModel;
-  /** Marketing objective (required) */
-  marketing_objective: MarketingObjective;
   /** Daily cap */
   daily_cap?: number;
   /** Daily ad delivery model */
@@ -258,20 +289,66 @@ export interface CreateCampaignRequest {
   cpa_goal?: number;
   /** Country targeting */
   country_targeting?: TargetingValue;
+  /** Sub-country (region) targeting */
+  sub_country_targeting?: TargetingValue;
+  /** DMA targeting (US only) */
+  dma_country_targeting?: TargetingValue;
+  /** Region targeting */
+  region_country_targeting?: TargetingValue;
+  /** City targeting */
+  city_targeting?: TargetingValue;
+  /** Postal code targeting */
+  postal_code_targeting?: TargetingValue;
+  /** Contextual targeting */
+  contextual_targeting?: TargetingValue;
   /** Platform targeting */
   platform_targeting?: TargetingValue;
+  /** Publisher targeting (blocking) */
+  publisher_targeting?: TargetingValue;
   /** OS targeting */
   os_targeting?: TargetingValue;
-  /** Start date */
+  /** Connection type targeting */
+  connection_type_targeting?: TargetingValue;
+  /** Browser targeting */
+  browser_targeting?: TargetingValue;
+  /** Auto publisher targeting */
+  auto_publisher_targeting?: TargetingValue;
+  /** Publisher bid modifiers */
+  publisher_bid_modifier?: PublisherBidModifierCollection;
+  /** Publisher bid strategy modifiers */
+  publisher_bid_strategy_modifiers?: PublisherBidStrategyModifierCollection;
+  /** Start date (defaults to 'now' if omitted) */
   start_date?: DateString;
   /** End date */
   end_date?: DateString;
+  /** Whether campaign is active */
+  is_active?: boolean;
   /** Tracking code */
   tracking_code?: string;
   /** Comments */
   comments?: string;
   /** Traffic allocation mode */
   traffic_allocation_mode?: TrafficAllocationMode;
+  /** A/B test end date */
+  traffic_allocation_ab_test_end_date?: DateString | null;
+  /** External brand safety config */
+  external_brand_safety?: ExternalBrandSafety;
+  /** Marketplace audience targeting */
+  audience_segments_multi_targeting?: MultiTargeting;
+  /** Custom audience targeting */
+  custom_audience_targeting?: MultiTargeting;
+  /** Marking label targeting */
+  marking_label_multi_targeting?: MultiTargeting;
+  /** Lookalike audience targeting */
+  lookalike_audience_targeting?: MultiTargeting;
+  /** Contextual segments targeting */
+  contextual_segments_targeting?: MultiTargeting;
+  /** Verification pixel config */
+  verification_pixel?: VerificationPixel;
+  /** Viewability tag config */
+  viewability_tag?: ViewabilityTag;
+  /** Activity schedule */
+  activity_schedule?: ActivitySchedule;
 }
 
 /**

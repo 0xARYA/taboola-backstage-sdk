@@ -128,14 +128,53 @@ export interface CampaignItem {
 }
 
 /**
- * Create campaign item request
+ * Create campaign item request (static ads only)
+ *
+ * Used with the single-item create endpoint: `POST /campaigns/{campaign_id}/items/`
+ *
+ * Only the `url` field is accepted. The item is created with a status of CRAWLING
+ * (read-only state). Poll until the status changes to RUNNING or NEED_TO_EDIT,
+ * then use `update()` to modify fields like title, thumbnail, CTA, etc.
+ *
+ * For creating items with more fields upfront, or for motion ads,
+ * use `bulkCreateAcrossCampaigns()` instead.
+ *
+ * @example
+ * ```typescript
+ * const item = await client.items.create('my-account', '12345', {
+ *   url: 'https://example.com/landing-page',
+ * });
+ * // Item is now in CRAWLING state - poll until ready
+ * ```
  */
 export interface CreateItemRequest {
   /** Landing page URL (required) */
   url: string;
-  /** Ad title/headline (required) */
-  title: string;
-  /** Thumbnail image URL (required unless uploading) */
+}
+
+/**
+ * Item data for bulk creation endpoints
+ *
+ * Used with bulk create endpoints that support both static ads and motion ads:
+ * - `bulkCreate()` — mass create within a single campaign
+ * - `bulkCreateAcrossCampaigns()` — create across multiple campaigns
+ *
+ * @example Static ad
+ * ```typescript
+ * { url: 'https://example.com', title: 'My Ad', thumbnail_url: '...' }
+ * ```
+ *
+ * @example Motion ad
+ * ```typescript
+ * { url: 'https://example.com', title: 'My Ad', performance_video_data: { video_url: '...', fallback_url: '...' } }
+ * ```
+ */
+export interface BulkCreateItemData {
+  /** Landing page URL (required) */
+  url: string;
+  /** Ad title/headline */
+  title?: string;
+  /** Thumbnail image URL (static ads) */
   thumbnail_url?: string;
   /** Ad description */
   description?: string;
@@ -147,6 +186,11 @@ export interface CreateItemRequest {
   third_party_tags?: string[];
   /** RSS feed URL (creates RSS item) */
   rss_url?: string;
+  /**
+   * Performance video data (motion ads only)
+   * Contains video_url (MP4) and fallback_url (JPG/PNG)
+   */
+  performance_video_data?: PerformanceVideoData;
 }
 
 /**
@@ -231,10 +275,10 @@ export interface CampaignItemListResponse {
 }
 
 /**
- * Bulk item creation request
+ * Bulk item creation request (within a single campaign)
  */
 export interface BulkCreateItemsRequest {
-  items: CreateItemRequest[];
+  items: BulkCreateItemData[];
 }
 
 /**
@@ -243,7 +287,7 @@ export interface BulkCreateItemsRequest {
 export interface BulkCreateItemsResponse {
   results: CampaignItem[];
   failed?: {
-    item: CreateItemRequest;
+    item: BulkCreateItemData;
     error: string;
   }[];
 }

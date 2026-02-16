@@ -63,13 +63,11 @@ describe('ItemsAPI', () => {
   });
 
   describe('create', () => {
-    it('should create an item', async () => {
+    it('should create an item with url only', async () => {
       const createRequest = {
         url: 'https://example.com/landing',
-        title: 'Amazing Product',
-        thumbnail_url: 'https://example.com/image.jpg',
       };
-      const mockItem = { id: 'new-item', ...createRequest };
+      const mockItem = { id: 'new-item', url: createRequest.url, status: 'CRAWLING' };
       mockHttp.post.mockResolvedValue(mockItem);
 
       const result = await itemsApi.create(accountId, campaignId, createRequest);

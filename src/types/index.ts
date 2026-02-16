@@ -75,6 +75,7 @@ export type {
 
 // Item types
 export type {
+  BulkCreateItemData,
   BulkCreateItemsRequest,
   BulkCreateItemsResponse,
   BulkDeleteItemsRequest,

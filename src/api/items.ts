@@ -4,6 +4,7 @@
 
 import type { HttpClient } from '../utils/http.js';
 import type {
+  BulkCreateItemData,
   BulkCreateItemsRequest,
   BulkCreateItemsResponse,
   BulkDeleteItemsRequest,
@@ -95,22 +96,26 @@ export class ItemsAPI {
   }
 
   /**
-   * Create a new item (ad) in a campaign
+   * Create a new item (static ad) in a campaign
+   *
+   * Only the `url` field is accepted. The item is created with a status of CRAWLING
+   * (read-only). Poll until the status changes to RUNNING or NEED_TO_EDIT, then
+   * use `update()` to modify fields.
+   *
+   * For creating items with more fields upfront, or for motion ads,
+   * use `bulkCreateAcrossCampaigns()` instead.
    *
    * @param accountId - Account ID
    * @param campaignId - Campaign ID
-   * @param item - Item data
+   * @param item - Item data (only `url` is accepted)
    *
    * @example
    * ```typescript
    * const item = await client.items.create('my-account', '12345', {
    *   url: 'https://example.com/landing-page',
-   *   title: 'Check Out Our Amazing Product!',
-   *   thumbnail_url: 'https://example.com/image.jpg',
-   *   description: 'Learn more about our product',
-   *   cta: { cta_type: 'LEARN_MORE' },
    * });
-   * console.log('Created item:', item.id);
+   * // Item starts in CRAWLING state - poll until status changes
+   * console.log('Created item:', item.id, item.status); // CRAWLING
    * ```
    */
   async create(
@@ -222,11 +227,13 @@ export class ItemsAPI {
   }
 
   /**
-   * Create multiple items at once (mass create)
+   * Create multiple items at once within a single campaign (mass create)
+   *
+   * Supports both static ads and motion ads via the bulk item data format.
    *
    * @param accountId - Account ID
    * @param campaignId - Campaign ID
-   * @param items - Array of items to create
+   * @param request - Bulk create request with items array
    *
    * @example
    * ```typescript
@@ -253,20 +260,37 @@ export class ItemsAPI {
   /**
    * Bulk create items across multiple campaigns
    *
+   * Unified endpoint that supports both static ads and motion ads.
+   *
    * @param accountId - Account ID
    * @param items - Array of items with campaign IDs
    *
-   * @example
+   * @example Static ads
    * ```typescript
    * await client.items.bulkCreateAcrossCampaigns('my-account', [
-   *   { campaign_id: '12345', url: '...', title: '...' },
-   *   { campaign_id: '12346', url: '...', title: '...' },
+   *   { campaign_id: '12345', url: 'https://example.com/1', title: 'Title 1' },
+   *   { campaign_id: '12346', url: 'https://example.com/2', title: 'Title 2' },
+   * ]);
+   * ```
+   *
+   * @example Motion ads
+   * ```typescript
+   * await client.items.bulkCreateAcrossCampaigns('my-account', [
+   *   {
+   *     campaign_id: '12345',
+   *     url: 'https://example.com/1',
+   *     title: 'Motion Ad',
+   *     performance_video_data: {
+   *       video_url: 'https://example.com/video.mp4',
+   *       fallback_url: 'https://example.com/fallback.jpg',
+   *     },
+   *   },
    * ]);
    * ```
    */
   async bulkCreateAcrossCampaigns(
     accountId: string,
-    items: (CreateItemRequest & { campaign_id: string })[]
+    items: (BulkCreateItemData & { campaign_id: string })[]
   ): Promise<BulkCreateItemsResponse> {
     return this.http.put<BulkCreateItemsResponse>(`${accountId}/items/bulk`, { items });
   }
