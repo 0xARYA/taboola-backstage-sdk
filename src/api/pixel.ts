@@ -20,6 +20,8 @@ import type {
   ConversionRuleWithDataListResponse,
 } from '../types/pixel.js';
 
+type ConversionRuleId = number | string;
+
 /**
  * Pixel API for managing conversion and custom audience rules
  */
@@ -58,7 +60,7 @@ export class PixelAPI {
    */
   async getConversionRule(
     accountId: string,
-    ruleId: string
+    ruleId: ConversionRuleId
   ): Promise<ConversionRule> {
     return this.http.get<ConversionRule>(
       `${accountId}/universal_pixel/conversion_rule/${ruleId}`
@@ -95,23 +97,17 @@ export class PixelAPI {
    * // URL-based conversion rule
    * const rule = await client.pixel.createConversionRule('my-account', {
    *   display_name: 'Purchase Completed',
-   *   type: 'URL_BASED',
-   *   category: 'PURCHASE',
-   *   conditions: [
-   *     {
-   *       type: 'URL',
-   *       operator: 'CONTAINS',
-   *       value: '/thank-you'
-   *     }
-   *   ],
-   *   effect: {
-   *     type: 'DYNAMIC_VALUE',
-   *     value: null,
-   *     currency: 'USD',
-   *     value_parameter: 'order_total'
+   *   type: 'BASIC',
+   *   category: 'MAKE_PURCHASE',
+   *   condition: {
+   *     property: 'URL',
+   *     predicate: 'CONTAINS',
+   *     value: '/thank-you',
+   *     children: [],
    *   },
-   *   conversion_window_days: 30,
-   *   view_through_window_days: 1
+   *   effects: [{ type: 'REVENUE', data: '15' }],
+   *   look_back_window: 30,
+   *   view_through_look_back_window: 1,
    * });
    *
    * // Event-based conversion rule
@@ -120,13 +116,7 @@ export class PixelAPI {
    *   type: 'EVENT_BASED',
    *   category: 'ADD_TO_CART',
    *   event_name: 'add_to_cart',
-   *   conditions: [],
-   *   effect: {
-   *     type: 'FIXED_VALUE',
-   *     value: 10,
-   *     currency: 'USD',
-   *     value_parameter: null
-   *   }
+   *   effects: [{ type: 'REVENUE', data: '10' }],
    * });
    * ```
    */
@@ -150,7 +140,7 @@ export class PixelAPI {
    */
   async updateConversionRule(
     accountId: string,
-    ruleId: string,
+    ruleId: ConversionRuleId,
     updates: UpdateConversionRuleRequest
   ): Promise<ConversionRule> {
     return this.http.post<ConversionRule>(
@@ -171,7 +161,7 @@ export class PixelAPI {
    */
   async archiveConversionRule(
     accountId: string,
-    ruleId: string
+    ruleId: ConversionRuleId
   ): Promise<ConversionRule> {
     return this.updateConversionRule(accountId, ruleId, { status: 'ARCHIVED' });
   }
@@ -187,7 +177,7 @@ export class PixelAPI {
    */
   async unarchiveConversionRule(
     accountId: string,
-    ruleId: string
+    ruleId: ConversionRuleId
   ): Promise<ConversionRule> {
     return this.updateConversionRule(accountId, ruleId, { status: 'ACTIVE' });
   }
@@ -243,37 +233,16 @@ export class PixelAPI {
    *
    * @example
    * ```typescript
-   * // All visitors audience
    * const allVisitors = await client.pixel.createCustomAudienceRule('my-account', {
    *   display_name: 'All Visitors - 30 Days',
    *   conditions: [],
-   *   ttl_days: 30
+   *   ttl_days: 30,
    * });
    *
-   * // Product page visitors
    * const productViewers = await client.pixel.createCustomAudienceRule('my-account', {
    *   display_name: 'Product Page Viewers',
-   *   conditions: [
-   *     {
-   *       type: 'URL',
-   *       operator: 'CONTAINS',
-   *       value: '/products/'
-   *     }
-   *   ],
-   *   ttl_days: 14
-   * });
-   *
-   * // Cart abandoners
-   * const cartAbandoners = await client.pixel.createCustomAudienceRule('my-account', {
-   *   display_name: 'Cart Abandoners',
-   *   conditions: [
-   *     {
-   *       type: 'EVENT_NAME',
-   *       operator: 'EQUALS',
-   *       value: 'add_to_cart'
-   *     }
-   *   ],
-   *   ttl_days: 7
+   *   conditions: [{ type: 'URL', operator: 'CONTAINS', value: '/products/' }],
+   *   ttl_days: 14,
    * });
    * ```
    */

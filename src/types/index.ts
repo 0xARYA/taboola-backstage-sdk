@@ -163,9 +163,10 @@ export type {
 
 // Pixel types
 export type {
-  Condition,
-  ConditionOperator,
-  ConditionType,
+  ConversionCategory,
+  ConversionCondition,
+  ConversionConditionPredicate,
+  ConversionEffect,
   ConversionRule,
   ConversionRuleListResponse,
   ConversionRuleStatus,
@@ -174,11 +175,12 @@ export type {
   ConversionRuleWithDataListResponse,
   CreateConversionRuleRequest,
   CreateCustomAudienceRuleRequest,
+  CustomAudienceCondition,
+  CustomAudienceConditionOperator,
+  CustomAudienceConditionType,
   CustomAudienceRule,
   CustomAudienceRuleListResponse,
   CustomAudienceRuleStatus,
-  Effect,
-  EffectType,
   UpdateConversionRuleRequest,
   UpdateCustomAudienceRuleRequest,
 } from './pixel.js';

@@ -248,20 +248,20 @@ const rules = await client.pixel.listConversionRules('account-id');
 // Get single conversion rule
 const rule = await client.pixel.getConversionRule('account-id', 'rule-id');
 
-// Create conversion rule
+// Create conversion rule (URL-based)
 const rule = await client.pixel.createConversionRule('account-id', {
   display_name: 'Purchase Completed',
-  type: 'EVENT_BASED',
-  category: 'PURCHASE',
-  event_name: 'purchase',
-  conditions: [],
-  effect: {
-    type: 'DYNAMIC_VALUE',
-    currency: 'USD',
-    value_parameter: 'order_total',
+  type: 'BASIC',
+  category: 'MAKE_PURCHASE',
+  condition: {
+    property: 'URL',
+    predicate: 'CONTAINS',
+    value: '/thank-you',
+    children: [],
   },
-  conversion_window_days: 30,
-  view_through_window_days: 1,
+  effects: [{ type: 'REVENUE', data: '15' }],
+  look_back_window: 30,
+  view_through_look_back_window: 1,
 });
 
 // Archive / Unarchive
@@ -533,39 +533,6 @@ const client = new TaboolaClient({
 ## API Documentation
 
 For detailed API documentation, see the [Taboola Backstage API Reference](https://developers.taboola.com/backstage-api/reference).
-
-## Changelog
-
-### v0.3.0 (2024)
-
-**Enhanced Update Support** - Comprehensive updates for campaigns and items
-
-- **Campaign Updates**: Expanded `UpdateCampaignRequest` to support all updatable fields including:
-  - Geographic targeting (DMA, region, city, postal code, sub-country)
-  - Advanced targeting (contextual, browser, connection type, auto publisher)
-  - Bid modifiers (publisher bid modifiers and bid strategy modifiers)
-  - Audience targeting (marketplace, custom, lookalike, marking labels, contextual segments)
-  - Additional fields (pricing model, campaign profile, traffic allocation, external brand safety, verification pixels, viewability tags)
-
-- **Item Updates**: Expanded `UpdateItemRequest` to support both static items and motion ads:
-  - Static items: `url`, `thumbnail_url`, `verification_pixel`, `viewability_tag`, `creative_focus`
-  - Motion ads: New `PerformanceVideoData` type with `video_url` and `fallback_url`
-  - Enhanced documentation with examples for both item types
-
-- **Partial Updates**: Both endpoints properly support partial updates where only specified fields are modified
-- **Improved Documentation**: Added comprehensive JSDoc examples and better API alignment
-
-### v0.2.1 (2024)
-
-Minor bug fixes and documentation improvements.
-
-### v0.2.0 (2024)
-
-Added support for shared budgets, marking labels, and realtime report signatures.
-
-### v0.1.0 (2024)
-
-Initial release with core API support.
 
 ## License
 
