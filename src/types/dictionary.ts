@@ -18,7 +18,6 @@ export interface Country {
 export interface Region {
   name: string;
   value: string;
-  country: string;
 }
 
 /**
@@ -94,41 +93,37 @@ export interface MinimumCPC {
  * Marketplace audience segment
  */
 export interface MarketplaceAudience {
-  id: string;
-  name: string;
+  taboola_audience_id: number;
+  audience_name: string;
   description: string | null;
-  provider: string | null;
-  data_partner_id: string | null;
-  parent_id: string | null;
-  has_children: boolean;
-  country: string | null;
-  platform: string | null;
-  full_path: string | null;
+  data_partner: string | null;
+  data_partner_audience_id: string | null;
+  allowed_countries: string[];
+  data_partner_group?: string | null;
+  taxonomy_categories?: string[] | null;
+  audience_size?: number | null;
 }
 
 /**
  * Lookalike audience
  */
 export interface LookalikeAudience {
-  id: string;
-  name: string;
-  description: string | null;
-  source_audience_id: string | null;
-  status: string;
-  size: number | null;
-  country: string | null;
+  rule_id: number;
+  audience_name: string;
+  similarity_level_to_size: Record<number, number> | null;
 }
 
 /**
  * Contextual segment
  */
 export interface ContextualSegment {
-  id: string;
-  name: string;
+  id: number;
+  label: string;
   description: string | null;
-  category: string | null;
-  parent_id: string | null;
-  has_children: boolean;
+  taxonomy: string | null;
+  provider?: string | null;
+  allowed_countries?: string[] | null;
+  size?: number | null;
 }
 
 /**

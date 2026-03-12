@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CampaignsAPI } from '../../../src/api/campaigns.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('CampaignsAPI', () => {
   let mockHttp: MockHttpClient;
@@ -209,10 +213,9 @@ describe('CampaignsAPI', () => {
 
       const result = await campaignsApi.pause(accountId, campaignId);
 
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}`,
-        { is_active: false }
-      );
+      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/campaigns/${campaignId}`, {
+        is_active: false,
+      });
       expect(result).toEqual(mockCampaign);
     });
   });
@@ -224,10 +227,9 @@ describe('CampaignsAPI', () => {
 
       const result = await campaignsApi.unpause(accountId, campaignId);
 
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}`,
-        { is_active: true }
-      );
+      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/campaigns/${campaignId}`, {
+        is_active: true,
+      });
       expect(result).toEqual(mockCampaign);
     });
   });
@@ -237,10 +239,29 @@ describe('CampaignsAPI', () => {
       const mockCampaign = { id: 'new-campaign', name: 'Campaign Copy' };
       mockHttp.post.mockResolvedValue(mockCampaign);
 
-      const result = await campaignsApi.duplicate(accountId, campaignId, 'Campaign Copy');
+      const result = await campaignsApi.duplicate(accountId, campaignId, {
+        name: 'Campaign Copy',
+      });
+
+      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/campaigns/${campaignId}/duplicate`, {
+        name: 'Campaign Copy',
+      });
+      expect(result).toEqual(mockCampaign);
+    });
+
+    it('should duplicate a campaign to a different account', async () => {
+      const mockCampaign = { id: 'new-campaign', name: 'Campaign Copy' };
+      mockHttp.post.mockResolvedValue(mockCampaign);
+
+      const result = await campaignsApi.duplicate(
+        accountId,
+        campaignId,
+        { name: 'Campaign Copy' },
+        'other-account'
+      );
 
       expect(mockHttp.post).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}/duplicate`,
+        `${accountId}/campaigns/${campaignId}/duplicate?destination_account=other-account`,
         { name: 'Campaign Copy' }
       );
       expect(result).toEqual(mockCampaign);
@@ -250,9 +271,7 @@ describe('CampaignsAPI', () => {
   describe('listBase', () => {
     it('should list campaigns with base fields', async () => {
       const mockResponse = {
-        results: [
-          { id: 'campaign-1', name: 'Campaign 1', status: 'RUNNING' },
-        ],
+        results: [{ id: 'campaign-1', name: 'Campaign 1', status: 'RUNNING' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -266,10 +285,8 @@ describe('CampaignsAPI', () => {
   describe('bulkUpdate', () => {
     it('should bulk update campaigns via PUT', async () => {
       const bulkRequest = {
-        campaigns: [
-          { campaign_id: 'campaign-1', update: { is_active: false } },
-          { campaign_id: 'campaign-2', update: { cpc: 0.6 } },
-        ],
+        campaigns: [12345, 12346],
+        update: { is_active: false },
       };
       const mockResponse = { results: [] };
       mockHttp.put.mockResolvedValue(mockResponse);
@@ -282,20 +299,35 @@ describe('CampaignsAPI', () => {
   });
 
   describe('patch', () => {
-    it('should patch a campaign collection', async () => {
-      const patchRequest = [
-        { op: 'ADD' as const, path: '/country_targeting/value', value: 'US' },
-      ];
+    it('should patch a campaign', async () => {
+      const patchRequest = {
+        patch_operation: 'ADD' as const,
+        country_targeting: { type: 'INCLUDE', value: ['US'] },
+      };
       const mockCampaign = { id: campaignId };
       mockHttp.patch.mockResolvedValue(mockCampaign);
 
-      const result = await campaignsApi.patch(accountId, campaignId, 'targeting', patchRequest);
+      const result = await campaignsApi.patch(accountId, campaignId, patchRequest);
 
       expect(mockHttp.patch).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}/targeting`,
+        `${accountId}/campaigns/${campaignId}`,
         patchRequest
       );
       expect(result).toEqual(mockCampaign);
+    });
+  });
+
+  describe('listNetwork', () => {
+    it('should list network campaigns with base fields', async () => {
+      const mockResponse = {
+        results: [{ id: 'campaign-1', name: 'Campaign 1', status: 'RUNNING' }],
+      };
+      mockHttp.get.mockResolvedValue(mockResponse);
+
+      const result = await campaignsApi.listNetwork('my-network');
+
+      expect(mockHttp.get).toHaveBeenCalledWith('my-network/campaigns/base');
+      expect(result).toEqual(mockResponse);
     });
   });
 

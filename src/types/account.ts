@@ -2,7 +2,7 @@
  * Account types for Taboola Backstage API
  */
 
-import type { CurrencyCode } from './common.js';
+import type { CurrencyCode, ListResponse } from './common.js';
 
 /**
  * Partner types
@@ -37,6 +37,8 @@ export interface Account {
   campaign_types: CampaignType[];
   /** Account currency */
   currency: CurrencyCode;
+  /** Account time zone name */
+  time_zone_name?: string;
 }
 
 /**
@@ -57,18 +59,16 @@ export interface AdvertiserAccount {
   campaign_types: CampaignType[];
   /** Account currency */
   currency: CurrencyCode;
+  /** Account time zone name */
+  time_zone_name?: string;
 }
 
 /**
  * Response for allowed accounts list
  */
-export interface AllowedAccountsResponse {
-  results: Account[];
-}
+export type AllowedAccountsResponse = ListResponse<Account>;
 
 /**
  * Response for network advertisers list
  */
-export interface NetworkAdvertisersResponse {
-  results: AdvertiserAccount[];
-}
+export type NetworkAdvertisersResponse = ListResponse<AdvertiserAccount>;

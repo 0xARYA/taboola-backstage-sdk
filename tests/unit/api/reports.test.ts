@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ReportsAPI } from '../../../src/api/reports.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('ReportsAPI', () => {
   let mockHttp: MockHttpClient;
@@ -20,8 +24,8 @@ describe('ReportsAPI', () => {
     it('should get campaign summary report by day', async () => {
       const mockResponse = {
         results: [
-          { date: '2024-01-01', clicks: 100, impressions: 10000, spent: 50.00 },
-          { date: '2024-01-02', clicks: 120, impressions: 12000, spent: 60.00 },
+          { date: '2024-01-01', clicks: 100, impressions: 10000, spent: 50.0 },
+          { date: '2024-01-02', clicks: 120, impressions: 12000, spent: 60.0 },
         ],
         recordCount: 2,
         metadata: {},
@@ -43,7 +47,7 @@ describe('ReportsAPI', () => {
       const mockResponse = { results: [], recordCount: 0, metadata: {} };
       mockHttp.get.mockResolvedValue(mockResponse);
 
-      await reportsApi.campaignSummary(accountId, 'campaign', {
+      await reportsApi.campaignSummary(accountId, 'campaign_breakdown', {
         start_date: '2024-01-01',
         end_date: '2024-01-31',
         campaign: '12345',
@@ -52,7 +56,7 @@ describe('ReportsAPI', () => {
       });
 
       expect(mockHttp.get).toHaveBeenCalledWith(
-        `${accountId}/reports/campaign-summary/dimensions/campaign?start_date=2024-01-01&end_date=2024-01-31&campaign=12345&country=US&platform=DESK`
+        `${accountId}/reports/campaign-summary/dimensions/campaign_breakdown?start_date=2024-01-01&end_date=2024-01-31&campaign=12345&country=US&platform=DESK`
       );
     });
 
@@ -75,7 +79,15 @@ describe('ReportsAPI', () => {
       const mockResponse = { results: [], recordCount: 0, metadata: {} };
       mockHttp.get.mockResolvedValue(mockResponse);
 
-      const dimensions = ['day', 'week', 'month', 'campaign', 'site', 'country', 'platform'] as const;
+      const dimensions = [
+        'day',
+        'week',
+        'month',
+        'campaign_breakdown',
+        'site_breakdown',
+        'country_breakdown',
+        'platform_breakdown',
+      ] as const;
 
       for (const dimension of dimensions) {
         await reportsApi.campaignSummary(accountId, dimension, {
@@ -94,8 +106,8 @@ describe('ReportsAPI', () => {
     it('should get top campaign content report', async () => {
       const mockResponse = {
         results: [
-          { item_id: 'item-1', item_name: 'Ad 1', clicks: 500, impressions: 50000 },
-          { item_id: 'item-2', item_name: 'Ad 2', clicks: 400, impressions: 40000 },
+          { item: 'item-1', item_name: 'Ad 1', clicks: 500, impressions: 50000 },
+          { item: 'item-2', item_name: 'Ad 2', clicks: 400, impressions: 40000 },
         ],
         recordCount: 2,
         metadata: {},
@@ -134,9 +146,7 @@ describe('ReportsAPI', () => {
   describe('realtimeCampaign', () => {
     it('should get realtime campaign report by hour', async () => {
       const mockResponse = {
-        results: [
-          { hour: '00:00', clicks: 50, impressions: 5000, spent: 25.00 },
-        ],
+        results: [{ date: '00:00', clicks: 50, visible_impressions: 5000, spent: 25.0 }],
         recordCount: 1,
         metadata: {},
       };
@@ -167,7 +177,9 @@ describe('ReportsAPI', () => {
       });
 
       expect(mockHttp.get).toHaveBeenCalledWith(
-        expect.stringContaining(`${accountId}/reports/realtime-campaign-summary/dimensions/by_campaign?`)
+        expect.stringContaining(
+          `${accountId}/reports/realtime-campaign-summary/dimensions/by_campaign?`
+        )
       );
       expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining('campaign=101%2C102'));
       expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining('platform=DESK'));
@@ -193,9 +205,17 @@ describe('ReportsAPI', () => {
       mockHttp.get.mockResolvedValue(mockResponse);
 
       const dimensions = [
-        'by_hour', 'by_campaign', 'by_site', 'by_country', 'by_platform',
-        'by_campaign_by_hour', 'by_campaign_by_site', 'by_campaign_by_country',
-        'by_campaign_by_platform', 'by_campaign_by_country_by_platform', 'by_platform_by_country',
+        'by_hour',
+        'by_campaign',
+        'by_site',
+        'by_country',
+        'by_platform',
+        'by_campaign_by_hour',
+        'by_campaign_by_site',
+        'by_campaign_by_country',
+        'by_campaign_by_platform',
+        'by_campaign_by_country_by_platform',
+        'by_platform_by_country',
       ] as const;
 
       for (const dimension of dimensions) {
@@ -214,9 +234,7 @@ describe('ReportsAPI', () => {
   describe('realtimeAds', () => {
     it('should get realtime ads report by item', async () => {
       const mockResponse = {
-        results: [
-          { item: '1001', item_name: 'Ad 1', clicks: 25, impressions: 2500 },
-        ],
+        results: [{ item_id: '1001', item_name: 'Ad 1', clicks: 25, visible_impressions: 2500 }],
         recordCount: 1,
         metadata: {},
       };
@@ -249,7 +267,9 @@ describe('ReportsAPI', () => {
       });
 
       expect(mockHttp.get).toHaveBeenCalledWith(
-        expect.stringContaining(`${accountId}/reports/realtime-top-campaign-content/dimensions/by_item?`)
+        expect.stringContaining(
+          `${accountId}/reports/realtime-top-campaign-content/dimensions/by_item?`
+        )
       );
       expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining('item=1001'));
       expect(mockHttp.get).toHaveBeenCalledWith(expect.stringContaining('campaign=101'));

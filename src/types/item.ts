@@ -26,8 +26,9 @@ export interface Coordinates {
  * @deprecated
  */
 export interface CreativeFocus {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   type: CreativeFocusType;
-  coordinates: Coordinates | null;
+  coordinates: Coordinates | null; // eslint-disable-line @typescript-eslint/no-deprecated
 }
 
 /**
@@ -100,6 +101,7 @@ export interface CampaignItem {
    * Creative focus configuration
    * @deprecated
    */
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   creative_focus?: CreativeFocus;
   /** Verification pixel */
   verification_pixel?: ItemVerificationPixel;
@@ -125,27 +127,20 @@ export interface CampaignItem {
   logo?: Record<string, unknown>;
   /** Disclaimer text */
   disclaimer?: string;
+  /** Creative type */
+  creative_type?: string;
+  /** Image orientation */
+  orientation?: string;
+  /** Performance video data (motion ads) */
+  performance_video_data?: PerformanceVideoData;
+  /** Item start date */
+  start_date?: string;
+  /** Item end date */
+  end_date?: string;
 }
 
 /**
  * Create campaign item request (static ads only)
- *
- * Used with the single-item create endpoint: `POST /campaigns/{campaign_id}/items/`
- *
- * Only the `url` field is accepted. The item is created with a status of CRAWLING
- * (read-only state). Poll until the status changes to RUNNING or NEED_TO_EDIT,
- * then use `update()` to modify fields like title, thumbnail, CTA, etc.
- *
- * For creating items with more fields upfront, or for motion ads,
- * use `bulkCreateAcrossCampaigns()` instead.
- *
- * @example
- * ```typescript
- * const item = await client.items.create('my-account', '12345', {
- *   url: 'https://example.com/landing-page',
- * });
- * // Item is now in CRAWLING state - poll until ready
- * ```
  */
 export interface CreateItemRequest {
   /** Landing page URL (required) */
@@ -154,20 +149,6 @@ export interface CreateItemRequest {
 
 /**
  * Item data for bulk creation endpoints
- *
- * Used with bulk create endpoints that support both static ads and motion ads:
- * - `bulkCreate()` — mass create within a single campaign
- * - `bulkCreateAcrossCampaigns()` — create across multiple campaigns
- *
- * @example Static ad
- * ```typescript
- * { url: 'https://example.com', title: 'My Ad', thumbnail_url: '...' }
- * ```
- *
- * @example Motion ad
- * ```typescript
- * { url: 'https://example.com', title: 'My Ad', performance_video_data: { video_url: '...', fallback_url: '...' } }
- * ```
  */
 export interface BulkCreateItemData {
   /** Landing page URL (required) */
@@ -186,11 +167,16 @@ export interface BulkCreateItemData {
   third_party_tags?: string[];
   /** RSS feed URL (creates RSS item) */
   rss_url?: string;
-  /**
-   * Performance video data (motion ads only)
-   * Contains video_url (MP4) and fallback_url (JPG/PNG)
-   */
+  /** Performance video data (motion ads only) */
   performance_video_data?: PerformanceVideoData;
+  /** Whether the item is active */
+  is_active?: boolean;
+  /** Creative crop configuration */
+  creative_crop?: Record<string, unknown>;
+  /** Verification pixel */
+  verification_pixel?: ItemVerificationPixel;
+  /** Viewability tag */
+  viewability_tag?: ItemViewabilityTag;
 }
 
 /**
@@ -201,34 +187,12 @@ export interface PerformanceVideoData {
   video_url: string;
   /** URL to the fallback image (JPG/PNG format) */
   fallback_url: string;
+  /** URL to the GIF preview */
+  gif_url?: string;
 }
 
 /**
  * Update campaign item request
- *
- * Submit only the fields you want to update. Fields that are omitted or null
- * will remain unchanged.
- *
- * Note: While status is CRAWLING, the Item is in a read-only state - no fields can be modified.
- *
- * @example Update a static item
- * ```typescript
- * await client.items.update('account-id', 'campaign-id', 'item-id', {
- *   title: 'Updated Title',
- *   is_active: true,
- * });
- * ```
- *
- * @example Update a motion ad
- * ```typescript
- * await client.items.update('account-id', 'campaign-id', 'item-id', {
- *   title: 'Updated Motion Ad',
- *   performance_video_data: {
- *     video_url: 'https://example.com/video.mp4',
- *     fallback_url: 'https://example.com/fallback.jpg',
- *   },
- * });
- * ```
  */
 export interface UpdateItemRequest {
   /** Ad title */
@@ -247,6 +211,7 @@ export interface UpdateItemRequest {
    * Creative focus configuration
    * @deprecated This field has been deprecated
    */
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   creative_focus?: CreativeFocus;
   /** Verification pixel */
   verification_pixel?: ItemVerificationPixel;
@@ -256,10 +221,7 @@ export interface UpdateItemRequest {
   custom_data?: string;
   /** Third-party tracking pixels */
   third_party_tags?: string[];
-  /**
-   * Performance video data (motion ads only)
-   * Contains video_url (MP4) and fallback_url (JPG/PNG)
-   */
+  /** Performance video data (motion ads only) */
   performance_video_data?: PerformanceVideoData;
 }
 
@@ -301,8 +263,18 @@ export interface BulkUpdateItemsRequest {
     id: string;
     /** Campaign ID */
     campaign_id: string;
-    /** Fields to update */
-    update: UpdateItemRequest;
+    /** Ad title */
+    title?: string;
+    /** Landing page URL */
+    url?: string;
+    /** Ad description */
+    description?: string;
+    /** Thumbnail image URL */
+    thumbnail_url?: string;
+    /** Whether item is active */
+    is_active?: boolean;
+    /** CTA configuration */
+    cta?: CTA;
   }[];
 }
 

@@ -13,11 +13,14 @@ import type { ListResponse } from './common.js';
  */
 export interface CombinedAudience {
   id: string;
-  name: string;
+  display_name: string;
   description: string | null;
   status: CombinedAudienceStatus;
   created_at: string;
-  updated_at: string;
+  last_modified_at: string;
+  last_modified_by?: string;
+  advertiser_id?: string;
+  audience_size?: number | null;
   include_rules: CombinedAudienceRule[];
   exclude_rules: CombinedAudienceRule[];
 }
@@ -38,11 +41,7 @@ export interface CombinedAudienceRule {
 /**
  * Type of audience in a combined audience rule
  */
-export type CombinedAudienceType =
-  | 'CUSTOM_AUDIENCE'
-  | 'LOOKALIKE_AUDIENCE'
-  | 'MARKETPLACE_AUDIENCE'
-  | 'FIRST_PARTY_AUDIENCE';
+export type CombinedAudienceType = 'Custom' | 'Lookalike' | 'Third_Party' | 'First_Party';
 
 /**
  * Individual audience item in a rule
@@ -61,7 +60,7 @@ export type CombinedAudienceListResponse = ListResponse<CombinedAudience>;
  * Request to create a combined audience
  */
 export interface CreateCombinedAudienceRequest {
-  name: string;
+  display_name: string;
   description?: string | undefined;
   include_rules: CombinedAudienceRule[];
   exclude_rules?: CombinedAudienceRule[] | undefined;
@@ -71,7 +70,7 @@ export interface CreateCombinedAudienceRequest {
  * Request to update a combined audience
  */
 export interface UpdateCombinedAudienceRequest {
-  name?: string | undefined;
+  display_name?: string | undefined;
   description?: string | undefined;
   include_rules?: CombinedAudienceRule[] | undefined;
   exclude_rules?: CombinedAudienceRule[] | undefined;
@@ -81,11 +80,14 @@ export interface UpdateCombinedAudienceRequest {
  * Available audience for combined audience creation
  */
 export interface AvailableAudience {
-  id: string;
-  name: string;
-  type: CombinedAudienceType;
+  id: number;
+  audience_name: string;
+  data_type: CombinedAudienceType;
   size: number | null;
   status: string;
+  provider?: string;
+  description?: string | null;
+  is_archived?: boolean;
 }
 
 /**
@@ -100,53 +102,67 @@ export type AvailableAudiencesResponse = ListResponse<AvailableAudience>;
  */
 export interface FirstPartyAudience {
   id: string;
-  name: string;
+  display_name: string;
   description: string | null;
   status: FirstPartyAudienceStatus;
-  size: number | null;
+  audience_size: number | null;
   match_rate: number | null;
   created_at: string;
-  updated_at: string;
-  ttl_days: number | null;
+  last_modified_at: string;
+  last_modified_by?: string;
+  ttl_in_hours: number | null;
+  ttl_type?: string;
   source_type: FirstPartyAudienceSourceType;
+  look_back_window?: number | null;
+  category?: string | null;
+  event_name?: string | null;
+  exclude_from_campaigns?: boolean;
+  advertiser_id?: string;
 }
 
 /**
  * First party audience status
  */
-export type FirstPartyAudienceStatus =
-  | 'BUILDING'
-  | 'READY'
-  | 'FAILED'
-  | 'EXPIRED'
-  | 'ARCHIVED';
+export type FirstPartyAudienceStatus = 'BUILDING' | 'READY' | 'FAILED' | 'EXPIRED' | 'ARCHIVED';
 
 /**
  * First party audience source type
  */
-export type FirstPartyAudienceSourceType =
-  | 'CRM'
-  | 'EMAIL'
-  | 'PHONE'
-  | 'DEVICE_ID'
-  | 'CUSTOM';
+export type FirstPartyAudienceSourceType = 'CRM' | 'EMAIL' | 'PHONE' | 'DEVICE_ID' | 'CUSTOM';
 
 /**
  * Request to create a first party audience
  */
 export interface CreateFirstPartyAudienceRequest {
-  name: string;
+  display_name: string;
   description?: string | undefined;
-  ttl_days?: number | undefined;
+  ttl_in_hours?: number | undefined;
   source_type: FirstPartyAudienceSourceType;
 }
 
 /**
- * User identifier for first party audience
+ * User identity item within a cluster
  */
-export interface FirstPartyAudienceUser {
-  identifier_type: FirstPartyIdentifierType;
-  identifier_value: string;
+export interface AudienceUserClusterItem {
+  user_id: string;
+  type: string;
+  is_hashed: boolean;
+}
+
+/**
+ * User identity cluster
+ */
+export interface AudienceUserIdentity {
+  cluster: AudienceUserClusterItem[];
+}
+
+/**
+ * Request to add or remove users from first party audience
+ */
+export interface AudienceUsersRequest {
+  operation: 'ADD' | 'REMOVE';
+  audience_id: number;
+  identities: AudienceUserIdentity[];
 }
 
 /**
@@ -159,29 +175,3 @@ export type FirstPartyIdentifierType =
   | 'PHONE_SHA256'
   | 'DEVICE_ID'
   | 'DEVICE_ID_SHA256';
-
-/**
- * Request to add or remove users from first party audience
- */
-export interface AddRemoveUsersRequest {
-  add?: FirstPartyAudienceUser[] | undefined;
-  remove?: FirstPartyAudienceUser[] | undefined;
-}
-
-/**
- * Response for add/remove users operation
- */
-export interface AddRemoveUsersResponse {
-  added_count: number;
-  removed_count: number;
-  failed_count: number;
-  errors: AddRemoveUserError[];
-}
-
-/**
- * Error from add/remove users operation
- */
-export interface AddRemoveUserError {
-  identifier: string;
-  error: string;
-}

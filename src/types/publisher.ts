@@ -4,15 +4,20 @@
  * Types for Taboola Backstage API publisher targeting and blocking.
  */
 
-import type { ListResponse } from './common.js';
+import type { CurrencyCode, ListResponse } from './common.js';
 
 /**
  * Publisher information
  */
 export interface Publisher {
-  site: string;
-  site_id: string;
-  is_blocked: boolean;
+  id: number;
+  name: string;
+  account_id: string;
+  partner_types?: string[];
+  type?: string;
+  campaign_types?: string[];
+  currency?: CurrencyCode;
+  time_zone_name?: string;
 }
 
 /**
@@ -21,18 +26,10 @@ export interface Publisher {
 export type PublisherListResponse = ListResponse<Publisher>;
 
 /**
- * Blocked publisher at account level
- */
-export interface BlockedPublisher {
-  site: string;
-  site_id: string;
-}
-
-/**
  * Response for blocked publishers
  */
 export interface BlockedPublishersResponse {
-  results: BlockedPublisher[];
+  sites: string[];
 }
 
 /**

@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PublishersAPI } from '../../../src/api/publishers.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('PublishersAPI', () => {
   let mockHttp: MockHttpClient;
@@ -20,48 +24,34 @@ describe('PublishersAPI', () => {
     it('should list all publishers', async () => {
       const mockResponse = {
         results: [
-          { site: 'site1.com', site_id: 'site-1', is_blocked: false },
-          { site: 'site2.com', site_id: 'site-2', is_blocked: true },
+          { id: 1, name: 'site1.com', account_id: 'site-1' },
+          { id: 2, name: 'site2.com', account_id: 'site-2' },
         ],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
       const result = await publishersApi.list(accountId);
 
-      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/publishers`);
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/allowed-publishers`);
       expect(result).toEqual(mockResponse.results);
     });
   });
 
   describe('getBlocked', () => {
-    it('should get blocked publishers (object response)', async () => {
+    it('should get blocked publishers', async () => {
       const mockResponse = {
-        results: [
-          { site: 'blocked1.com', site_id: 'blocked-1' },
-          { site: 'blocked2.com', site_id: 'blocked-2' },
-        ],
+        sites: ['blocked1.com', 'blocked2.com'],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
       const result = await publishersApi.getBlocked(accountId);
 
       expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/block-publisher`);
-      expect(result).toEqual(mockResponse.results);
+      expect(result).toEqual(['blocked1.com', 'blocked2.com']);
     });
 
-    it('should get blocked publishers (array response)', async () => {
-      const mockResponse = [
-        { site: 'blocked1.com', site_id: 'blocked-1' },
-      ];
-      mockHttp.get.mockResolvedValue(mockResponse);
-
-      const result = await publishersApi.getBlocked(accountId);
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('should return empty array when results is undefined', async () => {
-      mockHttp.get.mockResolvedValue({});
+    it('should return sites array from response', async () => {
+      mockHttp.get.mockResolvedValue({ sites: [] });
 
       const result = await publishersApi.getBlocked(accountId);
 
@@ -73,30 +63,24 @@ describe('PublishersAPI', () => {
     it('should update blocked publishers', async () => {
       const request = { sites: ['site1.com', 'site2.com'] };
       const mockResponse = {
-        results: [
-          { site: 'site1.com', site_id: 'site-1' },
-          { site: 'site2.com', site_id: 'site-2' },
-        ],
+        sites: ['site1.com', 'site2.com'],
       };
       mockHttp.post.mockResolvedValue(mockResponse);
 
       const result = await publishersApi.updateBlocked(accountId, request);
 
       expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/block-publisher`, request);
-      expect(result).toEqual(mockResponse.results);
+      expect(result).toEqual(['site1.com', 'site2.com']);
     });
   });
 
   describe('blockPublisher', () => {
     it('should block a single publisher', async () => {
       const currentBlocked = {
-        results: [{ site: 'existing.com', site_id: 'existing' }],
+        sites: ['existing.com'],
       };
       const updatedBlocked = {
-        results: [
-          { site: 'existing.com', site_id: 'existing' },
-          { site: 'newblock.com', site_id: 'newblock' },
-        ],
+        sites: ['existing.com', 'newblock.com'],
       };
       mockHttp.get.mockResolvedValue(currentBlocked);
       mockHttp.post.mockResolvedValue(updatedBlocked);
@@ -107,32 +91,29 @@ describe('PublishersAPI', () => {
       expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/block-publisher`, {
         sites: ['existing.com', 'newblock.com'],
       });
-      expect(result).toEqual(updatedBlocked.results);
+      expect(result).toEqual(['existing.com', 'newblock.com']);
     });
 
     it('should return current list if already blocked', async () => {
       const currentBlocked = {
-        results: [{ site: 'existing.com', site_id: 'existing' }],
+        sites: ['existing.com'],
       };
       mockHttp.get.mockResolvedValue(currentBlocked);
 
       const result = await publishersApi.blockPublisher(accountId, 'existing.com');
 
       expect(mockHttp.post).not.toHaveBeenCalled();
-      expect(result).toEqual(currentBlocked.results);
+      expect(result).toEqual(['existing.com']);
     });
   });
 
   describe('unblockPublisher', () => {
     it('should unblock a single publisher', async () => {
       const currentBlocked = {
-        results: [
-          { site: 'site1.com', site_id: 'site-1' },
-          { site: 'site2.com', site_id: 'site-2' },
-        ],
+        sites: ['site1.com', 'site2.com'],
       };
       const updatedBlocked = {
-        results: [{ site: 'site2.com', site_id: 'site-2' }],
+        sites: ['site2.com'],
       };
       mockHttp.get.mockResolvedValue(currentBlocked);
       mockHttp.post.mockResolvedValue(updatedBlocked);
@@ -142,13 +123,13 @@ describe('PublishersAPI', () => {
       expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/block-publisher`, {
         sites: ['site2.com'],
       });
-      expect(result).toEqual(updatedBlocked.results);
+      expect(result).toEqual(['site2.com']);
     });
   });
 
   describe('clearBlocked', () => {
     it('should clear all blocked publishers', async () => {
-      const mockResponse = { results: [] };
+      const mockResponse = { sites: [] };
       mockHttp.post.mockResolvedValue(mockResponse);
 
       const result = await publishersApi.clearBlocked(accountId);

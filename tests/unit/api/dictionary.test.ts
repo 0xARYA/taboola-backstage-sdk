@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DictionaryAPI } from '../../../src/api/dictionary.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('DictionaryAPI', () => {
   let mockHttp: MockHttpClient;
@@ -37,8 +41,8 @@ describe('DictionaryAPI', () => {
     it('should get regions for a country', async () => {
       const mockResponse = {
         results: [
-          { name: 'California', value: 'CA', country: 'US' },
-          { name: 'New York', value: 'NY', country: 'US' },
+          { name: 'California', value: 'CA' },
+          { name: 'New York', value: 'NY' },
         ],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
@@ -70,9 +74,7 @@ describe('DictionaryAPI', () => {
   describe('getPostalCodes', () => {
     it('should get postal codes for a country', async () => {
       const mockResponse = {
-        results: [
-          { name: '10001', value: '10001', country: 'US' },
-        ],
+        results: [{ name: '10001', value: '10001', country: 'US' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -164,15 +166,15 @@ describe('DictionaryAPI', () => {
     it('should get marketplace audiences for account', async () => {
       const mockResponse = {
         results: [
-          { id: 'aud-1', name: 'Auto Intenders' },
-          { id: 'aud-2', name: 'Tech Enthusiasts' },
+          { taboola_audience_id: 1, audience_name: 'Auto Intenders' },
+          { taboola_audience_id: 2, audience_name: 'Tech Enthusiasts' },
         ],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
       const result = await dictionaryApi.getMarketplaceAudiences(accountId);
 
-      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/dictionary/audience/segments`);
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/dictionary/audience_segments`);
       expect(result).toEqual(mockResponse.results);
     });
   });
@@ -181,15 +183,31 @@ describe('DictionaryAPI', () => {
     it('should get contextual segments for account', async () => {
       const mockResponse = {
         results: [
-          { id: 'ctx-1', name: 'Sports' },
-          { id: 'ctx-2', name: 'Technology' },
+          { id: 1, label: 'Sports' },
+          { id: 2, label: 'Technology' },
         ],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
       const result = await dictionaryApi.getContextualSegments(accountId);
 
-      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/dictionary/contextual-segments`);
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/dictionary/contextual_segments`);
+      expect(result).toEqual(mockResponse.results);
+    });
+  });
+
+  describe('getLookalikeAudiences', () => {
+    it('should get lookalike audiences for account', async () => {
+      const mockResponse = {
+        results: [
+          { rule_id: 1, audience_name: 'Lookalike 1', similarity_level_to_size: { 3: 50000 } },
+        ],
+      };
+      mockHttp.get.mockResolvedValue(mockResponse);
+
+      const result = await dictionaryApi.getLookalikeAudiences(accountId);
+
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/dictionary/lookalike_audiences`);
       expect(result).toEqual(mockResponse.results);
     });
   });

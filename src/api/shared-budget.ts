@@ -31,9 +31,7 @@ export class SharedBudgetAPI {
    * ```
    */
   async get(accountId: string, sharedBudgetId: string): Promise<SharedBudget> {
-    return this.http.get<SharedBudget>(
-      `${accountId}/shared-budget/${sharedBudgetId}`
-    );
+    return this.http.get<SharedBudget>(`${accountId}/shared-budget/${sharedBudgetId}`);
   }
 
   /**
@@ -52,9 +50,7 @@ export class SharedBudgetAPI {
    * ```
    */
   async listBase(accountId: string): Promise<SharedBudgetBaseListResponse> {
-    return this.http.get<SharedBudgetBaseListResponse>(
-      `${accountId}/shared-budget/base`
-    );
+    return this.http.get<SharedBudgetBaseListResponse>(`${accountId}/shared-budget/base`);
   }
 
   /**
@@ -75,14 +71,8 @@ export class SharedBudgetAPI {
    * console.log('Created shared budget:', budget.id);
    * ```
    */
-  async create(
-    accountId: string,
-    budget: CreateSharedBudgetRequest
-  ): Promise<SharedBudget> {
-    return this.http.post<SharedBudget>(
-      `${accountId}/shared-budget`,
-      budget
-    );
+  async create(accountId: string, budget: CreateSharedBudgetRequest): Promise<SharedBudget> {
+    return this.http.post<SharedBudget>(`${accountId}/shared-budget`, budget);
   }
 
   /**
@@ -105,9 +95,6 @@ export class SharedBudgetAPI {
     sharedBudgetId: string,
     updates: UpdateSharedBudgetRequest
   ): Promise<SharedBudget> {
-    return this.http.put<SharedBudget>(
-      `${accountId}/shared-budget/${sharedBudgetId}`,
-      updates
-    );
+    return this.http.put<SharedBudget>(`${accountId}/shared-budget/${sharedBudgetId}`, updates);
   }
 }

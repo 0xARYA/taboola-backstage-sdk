@@ -6,7 +6,11 @@
  */
 
 import type { HttpClient } from '../utils/http.js';
-import type { RealtimeAdsDimension, RealtimeCampaignDimension, ReportDimension } from '../types/common.js';
+import type {
+  RealtimeAdsDimension,
+  RealtimeCampaignDimension,
+  ReportDimension,
+} from '../types/common.js';
 import type {
   CampaignSummaryReport,
   CampaignSummaryReportParams,

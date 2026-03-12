@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PixelAPI } from '../../../src/api/pixel.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('PixelAPI', () => {
   let mockHttp: MockHttpClient;
@@ -28,9 +32,7 @@ describe('PixelAPI', () => {
 
       const result = await pixelApi.listConversionRules(accountId);
 
-      expect(mockHttp.get).toHaveBeenCalledWith(
-        `${accountId}/universal_pixel/conversion_rule`
-      );
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/universal_pixel/conversion_rule`);
       expect(result).toEqual(mockResponse.results);
     });
   });
@@ -52,9 +54,7 @@ describe('PixelAPI', () => {
   describe('listConversionRulesWithData', () => {
     it('should list conversion rules with performance data', async () => {
       const mockResponse = {
-        results: [
-          { id: 'rule-1', display_name: 'Purchase', conversions_30d: 100 },
-        ],
+        results: [{ id: 'rule-1', display_name: 'Purchase', conversions_30d: 100 }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -144,9 +144,7 @@ describe('PixelAPI', () => {
   describe('listCustomAudienceRules', () => {
     it('should list all custom audience rules', async () => {
       const mockResponse = {
-        results: [
-          { id: 'aud-rule-1', display_name: 'All Visitors', status: 'ACTIVE' },
-        ],
+        results: [{ id: 'aud-rule-1', display_name: 'All Visitors', status: 'ACTIVE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -201,7 +199,11 @@ describe('PixelAPI', () => {
       const mockRule = { id: 'aud-rule-1', display_name: 'Updated Audience' };
       mockHttp.post.mockResolvedValue(mockRule);
 
-      const result = await pixelApi.updateCustomAudienceRule(accountId, 'aud-rule-1', updateRequest);
+      const result = await pixelApi.updateCustomAudienceRule(
+        accountId,
+        'aud-rule-1',
+        updateRequest
+      );
 
       expect(mockHttp.post).toHaveBeenCalledWith(
         `${accountId}/universal_pixel/custom_audience_rule/aud-rule-1`,

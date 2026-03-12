@@ -50,7 +50,6 @@ export type {
 export type {
   ActivitySchedule,
   ActivityScheduleRule,
-  BulkCampaignUpdate,
   BulkCampaignUpdateRequest,
   Campaign,
   CampaignBase,
@@ -61,6 +60,8 @@ export type {
   CampaignReachEstimatorResponse,
   CampaignTargetingCollection,
   CreateCampaignRequest,
+  DuplicateCampaignRequest,
+  DuplicateSettings,
   ExternalBrandSafety,
   PatchOperation,
   PolicyReview,
@@ -82,10 +83,10 @@ export type {
   BulkUpdateItemsRequest,
   CampaignItem,
   CampaignItemListResponse,
-  Coordinates,
+  Coordinates, // eslint-disable-line @typescript-eslint/no-deprecated
   CreateItemRequest,
-  CreativeFocus,
-  CreativeFocusType,
+  CreativeFocus, // eslint-disable-line @typescript-eslint/no-deprecated
+  CreativeFocusType, // eslint-disable-line @typescript-eslint/no-deprecated
   CTA,
   ImageLibraryItem,
   ImageLibrarySearchParams,
@@ -121,7 +122,6 @@ export type {
 
 // Publisher types
 export type {
-  BlockedPublisher,
   BlockedPublishersResponse,
   Publisher,
   PublisherListResponse,
@@ -130,25 +130,27 @@ export type {
 
 // Targeting types
 export type {
-  AudienceSegment,
   AudienceTargeting,
-  ContextualSegmentValue,
   ContextualTargeting,
   FirstPartyAudienceTargeting,
+  LookalikeAudienceItem,
+  LookalikeAudienceTargeting,
   MarkingLabelsTargeting,
   PostalCodeTargeting,
-  PostalCodeValue,
+  TargetingRestriction,
   UpdateAudienceTargetingRequest,
   UpdateContextualTargetingRequest,
   UpdateFirstPartyAudienceTargetingRequest,
+  UpdateLookalikeAudienceTargetingRequest,
   UpdateMarkingLabelsTargetingRequest,
   UpdatePostalCodeTargetingRequest,
 } from './targeting.js';
 
 // Audience types
 export type {
-  AddRemoveUsersRequest,
-  AddRemoveUsersResponse,
+  AudienceUserClusterItem,
+  AudienceUserIdentity,
+  AudienceUsersRequest,
   AvailableAudience,
   AvailableAudiencesResponse,
   CombinedAudience,
@@ -157,7 +159,6 @@ export type {
   CreateCombinedAudienceRequest,
   CreateFirstPartyAudienceRequest,
   FirstPartyAudience,
-  FirstPartyAudienceUser,
   UpdateCombinedAudienceRequest,
 } from './audience.js';
 

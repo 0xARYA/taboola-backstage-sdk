@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { AccountsAPI } from '../../../src/api/accounts.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('AccountsAPI', () => {
   let mockHttp: MockHttpClient;
@@ -52,9 +56,7 @@ describe('AccountsAPI', () => {
   describe('getNetworkAdvertisers', () => {
     it('should get network advertisers', async () => {
       const mockResponse = {
-        results: [
-          { account_id: 'advertiser-1', name: 'Advertiser 1' },
-        ],
+        results: [{ account_id: 'advertiser-1', name: 'Advertiser 1' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 

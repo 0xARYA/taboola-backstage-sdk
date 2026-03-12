@@ -77,10 +77,7 @@ export interface ConversionCondition {
 /**
  * Condition predicate
  */
-export type ConversionConditionPredicate =
-  | 'CONTAINS'
-  | 'EQUALS'
-  | 'OR';
+export type ConversionConditionPredicate = 'CONTAINS' | 'EQUALS' | 'OR';
 
 /**
  * Effect of matching a conversion rule
@@ -164,7 +161,11 @@ export interface CustomAudienceCondition {
 /**
  * Custom audience condition type
  */
-export type CustomAudienceConditionType = 'URL' | 'URL_PARAMETER' | 'EVENT_NAME' | 'EVENT_PARAMETER';
+export type CustomAudienceConditionType =
+  | 'URL'
+  | 'URL_PARAMETER'
+  | 'EVENT_NAME'
+  | 'EVENT_PARAMETER';
 
 /**
  * Custom audience condition operator

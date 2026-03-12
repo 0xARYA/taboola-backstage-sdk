@@ -161,11 +161,7 @@ export class TaboolaServerError extends TaboolaError {
 /**
  * Parse API error response and throw appropriate error class
  */
-export function parseApiError(
-  statusCode: number,
-  response: unknown,
-  url: string
-): TaboolaError {
+export function parseApiError(statusCode: number, response: unknown, url: string): TaboolaError {
   const message = extractErrorMessage(response);
 
   switch (statusCode) {

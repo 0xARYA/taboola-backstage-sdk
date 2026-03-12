@@ -41,16 +41,12 @@ export class DictionaryAPI {
    * Get list of all supported countries
    */
   async getCountries(): Promise<Country[]> {
-    const response = await this.http.get<DictionaryListResponse<Country>>(
-      'resources/countries'
-    );
+    const response = await this.http.get<DictionaryListResponse<Country>>('resources/countries');
     return response.results;
   }
 
   /**
    * Get regions/states within a country
-   *
-   * @param countryCode - Country code (e.g., 'US', 'GB')
    */
   async getRegions(countryCode: string): Promise<Region[]> {
     const response = await this.http.get<DictionaryListResponse<Region>>(
@@ -61,9 +57,6 @@ export class DictionaryAPI {
 
   /**
    * Get DMAs (Designated Market Areas) for a country
-   * Note: Only available for US
-   *
-   * @param countryCode - Country code (typically 'US')
    */
   async getDMAs(countryCode: string): Promise<DMA[]> {
     const response = await this.http.get<DictionaryListResponse<DMA>>(
@@ -74,9 +67,6 @@ export class DictionaryAPI {
 
   /**
    * Get postal codes for a country
-   *
-   * @param countryCode - Country code (e.g., 'US', 'GB')
-   * @param params - Optional search and pagination parameters
    */
   async getPostalCodes(
     countryCode: string,
@@ -107,9 +97,7 @@ export class DictionaryAPI {
    * Get list of supported platforms
    */
   async getPlatforms(): Promise<Platform[]> {
-    const response = await this.http.get<DictionaryListResponse<Platform>>(
-      'resources/platforms'
-    );
+    const response = await this.http.get<DictionaryListResponse<Platform>>('resources/platforms');
     return response.results;
   }
 
@@ -147,9 +135,7 @@ export class DictionaryAPI {
    * Get list of supported browsers
    */
   async getBrowsers(): Promise<Browser[]> {
-    const response = await this.http.get<DictionaryListResponse<Browser>>(
-      'resources/browsers'
-    );
+    const response = await this.http.get<DictionaryListResponse<Browser>>('resources/browsers');
     return response.results;
   }
 
@@ -173,9 +159,8 @@ export class DictionaryAPI {
    * Get days of week for activity scheduling
    */
   async getDaysOfWeek(): Promise<DayOfWeek[]> {
-    const response = await this.http.get<DictionaryListResponse<DayOfWeek>>(
-      'resources/days-of-week'
-    );
+    const response =
+      await this.http.get<DictionaryListResponse<DayOfWeek>>('resources/days-of-week');
     return response.results;
   }
 
@@ -215,9 +200,8 @@ export class DictionaryAPI {
    * Get minimum CPC values per country/platform
    */
   async getMinimumCPCs(): Promise<MinimumCPC[]> {
-    const response = await this.http.get<DictionaryListResponse<MinimumCPC>>(
-      'resources/minimum-cpc'
-    );
+    const response =
+      await this.http.get<DictionaryListResponse<MinimumCPC>>('resources/minimum-cpc');
     return response.results;
   }
 
@@ -235,8 +219,6 @@ export class DictionaryAPI {
 
   /**
    * Get image taxonomies for categorizing images
-   *
-   * @param accountId - Account ID
    */
   async getImageTaxonomies(accountId: string): Promise<ImageTaxonomy[]> {
     const response = await this.http.get<DictionaryListResponse<ImageTaxonomy>>(
@@ -249,68 +231,56 @@ export class DictionaryAPI {
 
   /**
    * Get marketplace audience segments available for targeting
-   *
-   * @param accountId - Account ID
    */
   async getMarketplaceAudiences(accountId: string): Promise<MarketplaceAudience[]> {
     const response = await this.http.get<DictionaryListResponse<MarketplaceAudience>>(
-      `${accountId}/dictionary/audience/segments`
+      `${accountId}/dictionary/audience_segments`
     );
     return response.results;
   }
 
   /**
    * Get marketplace audience segments for a specific country
-   *
-   * @param accountId - Account ID
-   * @param countryCode - Country code (e.g., 'US', 'GB')
    */
   async getMarketplaceAudiencesByCountry(
     accountId: string,
     countryCode: string
   ): Promise<MarketplaceAudience[]> {
     const response = await this.http.get<DictionaryListResponse<MarketplaceAudience>>(
-      `${accountId}/dictionary/audience/segments/${countryCode}`
+      `${accountId}/dictionary/audience_segments/${countryCode}`
     );
     return response.results;
   }
 
   /**
    * Get lookalike audiences available for targeting
-   *
-   * @param accountId - Account ID
    */
   async getLookalikeAudiences(accountId: string): Promise<LookalikeAudience[]> {
     const response = await this.http.get<DictionaryListResponse<LookalikeAudience>>(
-      `${accountId}/dictionary/lookalike-audiences`
+      `${accountId}/dictionary/lookalike_audiences`
     );
     return response.results;
   }
 
   /**
    * Get lookalike audiences for a specific country
-   *
-   * @param accountId - Account ID
-   * @param countryCode - Country code (e.g., 'US', 'GB')
    */
   async getLookalikeAudiencesByCountry(
     accountId: string,
     countryCode: string
   ): Promise<LookalikeAudience[]> {
     const response = await this.http.get<DictionaryListResponse<LookalikeAudience>>(
-      `${accountId}/dictionary/lookalike-audiences/${countryCode}`
+      `${accountId}/dictionary/lookalike_audiences/${countryCode}`
     );
     return response.results;
   }
 
   /**
    * Get contextual segments available for targeting
-   *
-   * @param accountId - Account ID
    */
   async getContextualSegments(accountId: string): Promise<ContextualSegment[]> {
     const response = await this.http.get<DictionaryListResponse<ContextualSegment>>(
-      `${accountId}/dictionary/contextual-segments`
+      `${accountId}/dictionary/contextual_segments`
     );
     return response.results;
   }

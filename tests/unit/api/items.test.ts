@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ItemsAPI } from '../../../src/api/items.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('ItemsAPI', () => {
   let mockHttp: MockHttpClient;
@@ -30,9 +34,7 @@ describe('ItemsAPI', () => {
 
       const result = await itemsApi.list(accountId, campaignId);
 
-      expect(mockHttp.get).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}/items/`
-      );
+      expect(mockHttp.get).toHaveBeenCalledWith(`${accountId}/campaigns/${campaignId}/items/`);
       expect(result).toEqual(mockResponse);
     });
 
@@ -229,9 +231,7 @@ describe('ItemsAPI', () => {
   describe('bulkUpdate', () => {
     it('should bulk update items across campaigns', async () => {
       const bulkRequest = {
-        items: [
-          { id: 'i1', campaign_id: 'c1', update: { is_active: false } },
-        ],
+        items: [{ id: 'i1', campaign_id: 'c1', is_active: false }],
       };
       const mockResponse = { results: [] };
       mockHttp.post.mockResolvedValue(mockResponse);

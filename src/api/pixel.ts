@@ -20,8 +20,6 @@ import type {
   ConversionRuleWithDataListResponse,
 } from '../types/pixel.js';
 
-type ConversionRuleId = number | string;
-
 /**
  * Pixel API for managing conversion and custom audience rules
  */
@@ -58,12 +56,9 @@ export class PixelAPI {
    * @param ruleId - Conversion rule ID
    * @returns Conversion rule details
    */
-  async getConversionRule(
-    accountId: string,
-    ruleId: ConversionRuleId
-  ): Promise<ConversionRule> {
+  async getConversionRule(accountId: string, ruleId: number): Promise<ConversionRule> {
     return this.http.get<ConversionRule>(
-      `${accountId}/universal_pixel/conversion_rule/${ruleId}`
+      `${accountId}/universal_pixel/conversion_rule/${String(ruleId)}`
     );
   }
 
@@ -76,9 +71,7 @@ export class PixelAPI {
    * @param accountId - Account ID
    * @returns List of conversion rules with data
    */
-  async listConversionRulesWithData(
-    accountId: string
-  ): Promise<ConversionRuleWithData[]> {
+  async listConversionRulesWithData(accountId: string): Promise<ConversionRuleWithData[]> {
     const response = await this.http.get<ConversionRuleWithDataListResponse>(
       `${accountId}/universal_pixel/conversion_rule/data`
     );
@@ -124,10 +117,7 @@ export class PixelAPI {
     accountId: string,
     rule: CreateConversionRuleRequest
   ): Promise<ConversionRule> {
-    return this.http.post<ConversionRule>(
-      `${accountId}/universal_pixel/conversion_rule`,
-      rule
-    );
+    return this.http.post<ConversionRule>(`${accountId}/universal_pixel/conversion_rule`, rule);
   }
 
   /**
@@ -140,11 +130,11 @@ export class PixelAPI {
    */
   async updateConversionRule(
     accountId: string,
-    ruleId: ConversionRuleId,
+    ruleId: number,
     updates: UpdateConversionRuleRequest
   ): Promise<ConversionRule> {
     return this.http.post<ConversionRule>(
-      `${accountId}/universal_pixel/conversion_rule/${ruleId}`,
+      `${accountId}/universal_pixel/conversion_rule/${String(ruleId)}`,
       updates
     );
   }
@@ -159,10 +149,7 @@ export class PixelAPI {
    * @param ruleId - Conversion rule ID
    * @returns Archived conversion rule
    */
-  async archiveConversionRule(
-    accountId: string,
-    ruleId: ConversionRuleId
-  ): Promise<ConversionRule> {
+  async archiveConversionRule(accountId: string, ruleId: number): Promise<ConversionRule> {
     return this.updateConversionRule(accountId, ruleId, { status: 'ARCHIVED' });
   }
 
@@ -175,10 +162,7 @@ export class PixelAPI {
    * @param ruleId - Conversion rule ID
    * @returns Reactivated conversion rule
    */
-  async unarchiveConversionRule(
-    accountId: string,
-    ruleId: ConversionRuleId
-  ): Promise<ConversionRule> {
+  async unarchiveConversionRule(accountId: string, ruleId: number): Promise<ConversionRule> {
     return this.updateConversionRule(accountId, ruleId, { status: 'ACTIVE' });
   }
 
@@ -215,10 +199,7 @@ export class PixelAPI {
    * @param ruleId - Custom audience rule ID
    * @returns Custom audience rule details
    */
-  async getCustomAudienceRule(
-    accountId: string,
-    ruleId: string
-  ): Promise<CustomAudienceRule> {
+  async getCustomAudienceRule(accountId: string, ruleId: string): Promise<CustomAudienceRule> {
     return this.http.get<CustomAudienceRule>(
       `${accountId}/universal_pixel/custom_audience_rule/${ruleId}`
     );
@@ -284,10 +265,7 @@ export class PixelAPI {
    * @param ruleId - Custom audience rule ID
    * @returns Paused custom audience rule
    */
-  async pauseCustomAudienceRule(
-    accountId: string,
-    ruleId: string
-  ): Promise<CustomAudienceRule> {
+  async pauseCustomAudienceRule(accountId: string, ruleId: string): Promise<CustomAudienceRule> {
     return this.updateCustomAudienceRule(accountId, ruleId, { status: 'PAUSED' });
   }
 
@@ -298,10 +276,7 @@ export class PixelAPI {
    * @param ruleId - Custom audience rule ID
    * @returns Resumed custom audience rule
    */
-  async resumeCustomAudienceRule(
-    accountId: string,
-    ruleId: string
-  ): Promise<CustomAudienceRule> {
+  async resumeCustomAudienceRule(accountId: string, ruleId: string): Promise<CustomAudienceRule> {
     return this.updateCustomAudienceRule(accountId, ruleId, { status: 'ACTIVE' });
   }
 
@@ -315,10 +290,7 @@ export class PixelAPI {
    * @param ruleId - Custom audience rule ID
    * @returns Archived custom audience rule
    */
-  async archiveCustomAudienceRule(
-    accountId: string,
-    ruleId: string
-  ): Promise<CustomAudienceRule> {
+  async archiveCustomAudienceRule(accountId: string, ruleId: string): Promise<CustomAudienceRule> {
     return this.updateCustomAudienceRule(accountId, ruleId, { status: 'ARCHIVED' });
   }
 }

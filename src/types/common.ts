@@ -96,7 +96,7 @@ export type ItemStatus =
 /**
  * Pricing models
  */
-export type PricingModel = 'CPC' | 'CPM' | 'VCPM' | 'CPV' | 'CPA';
+export type PricingModel = 'CPC' | 'CPM' | 'VCPM';
 
 /**
  * Spending limit models
@@ -105,6 +105,8 @@ export type SpendingLimitModel = 'MONTHLY' | 'ENTIRE' | 'DAILY' | 'NONE';
 
 /**
  * Daily ad delivery models
+ *
+ * @remarks ACCELERATED is deprecated by Taboola
  */
 export type DailyAdDeliveryModel = 'ACCELERATED' | 'BALANCED' | 'STRICT';
 
@@ -114,20 +116,15 @@ export type DailyAdDeliveryModel = 'ACCELERATED' | 'BALANCED' | 'STRICT';
 export type MarketingObjective =
   | 'DRIVE_WEBSITE_TRAFFIC'
   | 'BRAND_AWARENESS'
-  | 'DRIVE_PURCHASES'
-  | 'GENERATE_LEADS'
-  | 'DRIVE_APP_INSTALLS'
-  | 'MAX_CONVERSIONS';
+  | 'ONLINE_PURCHASES'
+  | 'LEADS_GENERATION'
+  | 'MOBILE_APP_INSTALL'
+  | 'OTHER';
 
 /**
  * Bid strategies
  */
-export type BidStrategy =
-  | 'FIXED'
-  | 'SMART'
-  | 'TARGET_CPA'
-  | 'MAX_CONVERSIONS'
-  | 'TARGET_ROAS';
+export type BidStrategy = 'FIXED' | 'SMART' | 'TARGET_CPA' | 'MAX_CONVERSIONS';
 
 /**
  * Traffic allocation modes
@@ -191,29 +188,20 @@ export type ReportDimension =
   | 'month'
   | 'content_provider_breakdown'
   | 'campaign_breakdown'
+  | 'campaign_hour_breakdown'
   | 'site_breakdown'
   | 'country_breakdown'
+  | 'content_provider_country_breakdown'
   | 'region_breakdown'
   | 'dma_breakdown'
   | 'platform_breakdown'
   | 'campaign_day_breakdown'
   | 'campaign_site_day_breakdown'
   | 'user_segment_breakdown'
-  | 'campaign_week'
-  | 'campaign_month'
-  | 'site_day'
-  | 'country_day'
-  | 'platform_day'
-  | 'browser'
-  | 'browser_day'
-  | 'os_family'
-  | 'os_family_day'
-  | 'item_breakdown'
-  // Shorthand aliases used by the API
-  | 'campaign'
-  | 'site'
-  | 'country'
-  | 'platform';
+  | 'os_family_breakdown'
+  | 'os_version_breakdown'
+  | 'browser_breakdown'
+  | 'contextual_breakdown';
 
 /**
  * Realtime Campaign Report dimension types
@@ -231,13 +219,16 @@ export type RealtimeCampaignDimension =
   | 'by_campaign_by_country'
   | 'by_campaign_by_platform'
   | 'by_campaign_by_country_by_platform'
-  | 'by_platform_by_country';
+  | 'by_platform_by_country'
+  | 'by_hour_by_smallest_time_bucket'
+  | 'by_campaign_by_smallest_time_bucket'
+  | 'by_site_by_smallest_time_bucket'
+  | 'by_country_by_smallest_time_bucket'
+  | 'by_platform_by_smallest_time_bucket';
 
 /**
  * Realtime Ads Report dimension types
  *
  * @see https://developers.taboola.com/backstage-api/reference/realtime-ads-report
  */
-export type RealtimeAdsDimension =
-  | 'by_item'
-  | 'by_item_by_smallest_time_bucket';
+export type RealtimeAdsDimension = 'by_item' | 'by_item_by_smallest_time_bucket';

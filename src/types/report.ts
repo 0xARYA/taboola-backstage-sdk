@@ -162,6 +162,10 @@ export interface CampaignSummaryRow {
   conversions_value: number;
   /** Return on ad spend */
   roas: number;
+  /** ROAS from clicks */
+  roas_clicks?: number | undefined;
+  /** ROAS from views */
+  roas_views?: number | undefined;
   /** Cost per action (all) */
   cpa: number;
   /** CPA from clicks */
@@ -186,6 +190,16 @@ export interface CampaignSummaryRow {
   audience_name?: string | undefined;
   /** Data partner audience ID (for user_segment_breakdown dimension) */
   data_partner_audience_id?: string | undefined;
+  /** Campaign learning state */
+  campaign_learning_state?: string | undefined;
+  /** Audience description */
+  audience_description?: string | undefined;
+  /** OS family (for os_family_breakdown dimension) */
+  os_family?: string | undefined;
+  /** OS version (for os_version_breakdown dimension) */
+  os_version?: string | undefined;
+  /** Browser (for browser_breakdown dimension) */
+  browser?: string | undefined;
   /** Custom conversion columns (dynamic based on include_conversions) */
   [key: string]: unknown;
 }
@@ -219,6 +233,16 @@ export interface TopCampaignContentRow {
   /** Content provider (publisher) */
   content_provider?: string | undefined;
   content_provider_name?: string | undefined;
+  /** Ad description */
+  description?: string | undefined;
+  /** Creation time */
+  create_time?: string | undefined;
+  /** Learning display status */
+  learning_display_status?: string | undefined;
+  /** Ad name */
+  ad_name?: string | undefined;
+  /** Custom ID */
+  custom_id?: string | undefined;
   /** Metrics */
   clicks: number;
   impressions: number;
@@ -237,8 +261,6 @@ export interface TopCampaignContentRow {
   conversions_value: number;
   roas: number;
   cpa: number;
-  cpa_actions_num: number;
-  cpa_conversion_rate: number;
   /** Custom conversion columns */
   [key: string]: unknown;
 }
@@ -261,22 +283,24 @@ export interface RealtimeCampaignReport {
  * Fields present depend on the chosen dimension.
  */
 export interface RealtimeCampaignRow {
-  /** Hour (for by_hour dimensions) */
-  hour?: string | undefined;
+  /** Date/time bucket */
+  date?: string | undefined;
   /** Campaign ID (for by_campaign dimensions) */
-  campaign?: string | undefined;
+  campaign_id?: string | undefined;
   campaign_name?: string | undefined;
   /** Site name (for by_site dimensions) */
-  site?: string | undefined;
+  site_name?: string | undefined;
   site_id?: string | undefined;
   /** Country code (for by_country dimensions) */
   country?: string | undefined;
+  /** Country name */
+  country_name?: string | undefined;
   /** Platform (for by_platform dimensions) */
   platform?: string | undefined;
+  /** Platform name */
+  platform_name?: string | undefined;
   /** Number of clicks */
   clicks: number;
-  /** Number of impressions */
-  impressions: number;
   /** Number of visible impressions */
   visible_impressions: number;
   /** Total spend */
@@ -299,6 +323,10 @@ export interface RealtimeCampaignRow {
   cpa_conversion_rate: number;
   /** Cost per action */
   cpa: number;
+  /** Total conversion value */
+  conversions_value?: number | undefined;
+  /** Return on ad spend */
+  roas?: number | undefined;
   /** Dynamic fields (e.g. from fetch_config) */
   [key: string]: unknown;
 }
@@ -320,17 +348,23 @@ export interface RealtimeAdsReport {
  */
 export interface RealtimeAdsRow {
   /** Item (ad) ID */
-  item: string;
+  item_id: string;
   item_name: string;
   /** Thumbnail URL */
   thumbnail_url: string;
   /** Campaign ID */
-  campaign: string;
+  campaign_id: string;
   campaign_name: string;
+  /** Ad description */
+  description?: string | undefined;
+  /** Landing page URL */
+  url?: string | undefined;
+  /** Item type */
+  item_type?: string | undefined;
+  /** Date/time bucket */
+  date?: string | undefined;
   /** Number of clicks */
   clicks: number;
-  /** Number of impressions */
-  impressions: number;
   /** Number of visible impressions */
   visible_impressions: number;
   /** Total spend */
@@ -353,6 +387,10 @@ export interface RealtimeAdsRow {
   cpa_conversion_rate: number;
   /** Cost per action */
   cpa: number;
+  /** Total conversion value */
+  conversions_value?: number | undefined;
+  /** Return on ad spend */
+  roas?: number | undefined;
   /** Dynamic fields */
   [key: string]: unknown;
 }
@@ -378,7 +416,17 @@ export interface ReportField {
 /**
  * Report data type
  */
-export type ReportDataType = 'DATE' | 'STRING' | 'NUMERIC' | 'CURRENCY' | 'PERCENTAGE';
+export type ReportDataType =
+  | 'STRING'
+  | 'FLOAT'
+  | 'MONEY'
+  | 'PERCENT'
+  | 'NUMERIC'
+  | 'DATA'
+  | 'DATE'
+  | 'TIMESTAMP'
+  | 'URL'
+  | 'BOOLEAN';
 
 /**
  * Re-export dimension types for convenience

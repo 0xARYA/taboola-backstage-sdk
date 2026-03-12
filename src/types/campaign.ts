@@ -234,35 +234,6 @@ export interface Campaign {
 
 /**
  * Campaign creation request
- *
- * The minimal set of required fields depends on the chosen bidding strategy
- * (and whether or not a spending limit is being set). You can optionally pass
- * additional fields.
- *
- * @example Bidding strategy FIXED with spending limit
- * ```typescript
- * await client.campaigns.create('account-id', {
- *   name: 'DemoCampaign',
- *   branding_text: 'Pizza',
- *   cpc: 0.25,
- *   spending_limit: 1000,
- *   spending_limit_model: 'MONTHLY',
- *   marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
- * });
- * ```
- *
- * @example Bidding strategy MAXIMIZE_CONVERSIONS
- * ```typescript
- * await client.campaigns.create('account-id', {
- *   name: 'Conversions Campaign',
- *   branding_text: 'My Brand',
- *   bid_strategy: 'MAX_CONVERSIONS',
- *   cpa_goal: 5.00,
- *   spending_limit: 5000,
- *   spending_limit_model: 'MONTHLY',
- *   marketing_objective: 'DRIVE_WEBSITE_TRAFFIC',
- * });
- * ```
  */
 export interface CreateCampaignRequest {
   /** Campaign name (required) */
@@ -356,31 +327,6 @@ export interface CreateCampaignRequest {
  *
  * Submit a JSON object with only the fields you want to update.
  * Fields that are omitted or null will not be updated.
- *
- * @example Update a single field
- * ```typescript
- * await client.campaigns.update('account-id', 'campaign-id', {
- *   name: 'DemoCampaign - Edited'
- * });
- * ```
- *
- * @example Update multiple fields
- * ```typescript
- * await client.campaigns.update('account-id', 'campaign-id', {
- *   name: 'Demo Campaign - Edited Again',
- *   branding_text: 'New branding text',
- *   spending_limit: 10000,
- *   spending_limit_model: 'ENTIRE',
- *   country_targeting: {
- *     type: 'INCLUDE',
- *     value: ['AU', 'GB']
- *   },
- *   platform_targeting: {
- *     type: 'INCLUDE',
- *     value: ['TBLT', 'PHON']
- *   }
- * });
- * ```
  */
 export interface UpdateCampaignRequest {
   /** Campaign name */
@@ -483,20 +429,15 @@ export interface CampaignListResponse {
 }
 
 /**
- * Bulk campaign update request item
- */
-export interface BulkCampaignUpdate {
-  /** Campaign ID to update */
-  campaign_id: string;
-  /** Fields to update */
-  update: UpdateCampaignRequest;
-}
-
-/**
  * Bulk campaign update request
  */
 export interface BulkCampaignUpdateRequest {
-  campaigns: BulkCampaignUpdate[];
+  /** Campaign IDs to update */
+  campaigns: number[];
+  /** Order IDs to update (alternative to campaign IDs) */
+  order_ids?: string[];
+  /** Fields to update on all specified campaigns */
+  update: UpdateCampaignRequest;
 }
 
 /**
@@ -505,15 +446,13 @@ export interface BulkCampaignUpdateRequest {
 export type PatchOperation = 'ADD' | 'REMOVE' | 'REPLACE';
 
 /**
- * Campaign patch request for collections
+ * Campaign patch request
  */
 export interface CampaignPatchRequest {
-  /** Operation type */
-  op: PatchOperation;
-  /** Path to the field */
-  path: string;
-  /** Value to set */
-  value: unknown;
+  /** Patch operation type */
+  patch_operation: PatchOperation;
+  /** Additional fields for the patch */
+  [key: string]: unknown;
 }
 
 /**
@@ -594,4 +533,24 @@ export interface CampaignTargetingCollection {
   type: string;
   value: string[];
   href?: string | null;
+}
+
+/**
+ * Settings for campaign duplication
+ */
+export interface DuplicateSettings {
+  /** Whether to copy items from the source campaign */
+  copy_items?: boolean;
+  /** Whether to copy targeting from the source campaign */
+  copy_targeting?: boolean;
+}
+
+/**
+ * Campaign duplication request
+ */
+export interface DuplicateCampaignRequest {
+  /** Name for the duplicated campaign */
+  name?: string;
+  /** Duplication settings */
+  duplicate_settings?: DuplicateSettings;
 }

@@ -54,7 +54,9 @@ export class HttpClient {
         afterResponse: [
           async (request, _options, response) => {
             if (this.debug) {
-              console.log(`[Taboola SDK] ${request.method} ${String(response.status)} ${request.url}`);
+              console.log(
+                `[Taboola SDK] ${request.method} ${String(response.status)} ${request.url}`
+              );
             }
 
             // Handle 401 by refreshing token and retrying once

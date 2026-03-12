@@ -4,7 +4,11 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TargetingAPI } from '../../../src/api/targeting.js';
-import { createMockHttpClient, mockHttpClientAsType, type MockHttpClient } from '../../helpers/mock-http.js';
+import {
+  createMockHttpClient,
+  mockHttpClientAsType,
+  type MockHttpClient,
+} from '../../helpers/mock-http.js';
 
 describe('TargetingAPI', () => {
   let mockHttp: MockHttpClient;
@@ -21,8 +25,7 @@ describe('TargetingAPI', () => {
     it('should get postal code targeting', async () => {
       const mockResponse = {
         type: 'INCLUDE',
-        values: [{ postal_code: '10001', country: 'US' }],
-        restrictions: null,
+        collection: ['10001', '10002'],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -39,12 +42,9 @@ describe('TargetingAPI', () => {
     it('should update postal code targeting', async () => {
       const request = {
         type: 'INCLUDE' as const,
-        values: [
-          { postal_code: '10001', country: 'US' },
-          { postal_code: '10002', country: 'US' },
-        ],
+        collection: ['10001', '10002'],
       };
-      const mockResponse = { ...request, restrictions: null };
+      const mockResponse = { ...request };
       mockHttp.post.mockResolvedValue(mockResponse);
 
       const result = await targetingApi.updatePostalCodes(accountId, campaignId, request);
@@ -60,8 +60,7 @@ describe('TargetingAPI', () => {
   describe('getMarketplaceAudiences', () => {
     it('should get marketplace audience targeting', async () => {
       const mockResponse = {
-        type: 'EXISTS',
-        collection: [{ id: 'segment-1', name: 'Auto Intenders' }],
+        collection: [{ collection: [123], type: 'INCLUDE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -77,8 +76,7 @@ describe('TargetingAPI', () => {
   describe('updateMarketplaceAudiences', () => {
     it('should update marketplace audience targeting', async () => {
       const request = {
-        type: 'EXISTS' as const,
-        collection: [{ id: 'segment-1', name: null }],
+        collection: [{ collection: [123], type: 'INCLUDE' as const }],
       };
       mockHttp.post.mockResolvedValue(request);
 
@@ -95,8 +93,7 @@ describe('TargetingAPI', () => {
   describe('getCustomAudiences', () => {
     it('should get custom audience targeting', async () => {
       const mockResponse = {
-        type: 'EXISTS',
-        collection: [{ id: 'custom-1', name: 'My Custom Audience' }],
+        collection: [{ collection: [456], type: 'INCLUDE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -112,8 +109,7 @@ describe('TargetingAPI', () => {
   describe('updateCustomAudiences', () => {
     it('should update custom audience targeting', async () => {
       const request = {
-        type: 'EXISTS' as const,
-        collection: [{ id: 'custom-1', name: null }],
+        collection: [{ collection: [456], type: 'INCLUDE' as const }],
       };
       mockHttp.post.mockResolvedValue(request);
 
@@ -130,8 +126,7 @@ describe('TargetingAPI', () => {
   describe('getLookalikeAudiences', () => {
     it('should get lookalike audience targeting', async () => {
       const mockResponse = {
-        type: 'EXISTS',
-        collection: [{ id: 'lookalike-1', name: 'Lookalike Audience' }],
+        collection: [{ collection: [{ rule_id: 1, similarity_level: 3 }], type: 'INCLUDE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -147,8 +142,9 @@ describe('TargetingAPI', () => {
   describe('updateLookalikeAudiences', () => {
     it('should update lookalike audience targeting', async () => {
       const request = {
-        type: 'EXISTS' as const,
-        collection: [{ id: 'lookalike-1', name: null }],
+        collection: [
+          { collection: [{ rule_id: 1, similarity_level: 3 }], type: 'INCLUDE' as const },
+        ],
       };
       mockHttp.post.mockResolvedValue(request);
 
@@ -165,8 +161,7 @@ describe('TargetingAPI', () => {
   describe('getContextual', () => {
     it('should get contextual targeting', async () => {
       const mockResponse = {
-        type: 'EXISTS',
-        collection: [{ id: 'context-1', name: 'Sports' }],
+        collection: [{ collection: [789], type: 'INCLUDE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -182,8 +177,7 @@ describe('TargetingAPI', () => {
   describe('updateContextual', () => {
     it('should update contextual targeting', async () => {
       const request = {
-        type: 'EXISTS' as const,
-        collection: [{ id: 'context-1', name: null }],
+        collection: [{ collection: [789], type: 'INCLUDE' as const }],
       };
       mockHttp.post.mockResolvedValue(request);
 
@@ -200,8 +194,7 @@ describe('TargetingAPI', () => {
   describe('getFirstPartyAudiences', () => {
     it('should get first party audience targeting', async () => {
       const mockResponse = {
-        type: 'EXISTS',
-        collection: [{ id: 'fp-1', name: 'My Audience' }],
+        collection: [{ collection: [111], type: 'INCLUDE' }],
       };
       mockHttp.get.mockResolvedValue(mockResponse);
 
@@ -217,8 +210,7 @@ describe('TargetingAPI', () => {
   describe('updateFirstPartyAudiences', () => {
     it('should update first party audience targeting', async () => {
       const request = {
-        type: 'EXISTS' as const,
-        collection: [{ id: 'fp-1', name: null }],
+        collection: [{ collection: [111], type: 'INCLUDE' as const }],
       };
       mockHttp.post.mockResolvedValue(request);
 
@@ -226,6 +218,39 @@ describe('TargetingAPI', () => {
 
       expect(mockHttp.post).toHaveBeenCalledWith(
         `${accountId}/campaigns/${campaignId}/targeting/my_audiences`,
+        request
+      );
+      expect(result).toEqual(request);
+    });
+  });
+
+  describe('getMarkingLabels', () => {
+    it('should get marking labels targeting', async () => {
+      const mockResponse = {
+        collection: [{ collection: ['label-1', 'label-2'], type: 'INCLUDE' }],
+      };
+      mockHttp.get.mockResolvedValue(mockResponse);
+
+      const result = await targetingApi.getMarkingLabels(accountId, campaignId);
+
+      expect(mockHttp.get).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/targeting/marking_labels`
+      );
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('updateMarkingLabels', () => {
+    it('should update marking labels targeting', async () => {
+      const request = {
+        collection: [{ collection: ['label-1', 'label-2'], type: 'INCLUDE' as const }],
+      };
+      mockHttp.post.mockResolvedValue(request);
+
+      const result = await targetingApi.updateMarkingLabels(accountId, campaignId, request);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/campaigns/${campaignId}/targeting/marking_labels`,
         request
       );
       expect(result).toEqual(request);

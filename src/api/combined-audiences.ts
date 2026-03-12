@@ -23,108 +23,43 @@ export class CombinedAudiencesAPI {
 
   /**
    * List available audiences for combining
-   *
-   * Returns all audiences that can be used in combined audience rules,
-   * including custom, lookalike, marketplace, and first-party audiences.
-   *
-   * @param accountId - Account ID
-   * @returns List of available audiences
-   *
-   * @example
-   * ```typescript
-   * const available = await client.combinedAudiences.listAvailable('my-account');
-   * console.log(`${available.length} audiences available for combining`);
-   * ```
    */
   async listAvailable(accountId: string): Promise<AvailableAudience[]> {
     const response = await this.http.get<AvailableAudiencesResponse>(
-      `${accountId}/combined-audiences/available`
+      `${accountId}/combined_audiences/resources/audiences`
     );
     return response.results;
   }
 
   /**
    * List all combined audiences
-   *
-   * @param accountId - Account ID
-   * @returns List of combined audiences
-   *
-   * @example
-   * ```typescript
-   * const audiences = await client.combinedAudiences.list('my-account');
-   * for (const audience of audiences) {
-   *   console.log(`${audience.name}: ${audience.status}`);
-   * }
-   * ```
    */
   async list(accountId: string): Promise<CombinedAudience[]> {
     const response = await this.http.get<CombinedAudienceListResponse>(
-      `${accountId}/combined-audiences`
+      `${accountId}/combined_audiences`
     );
     return response.results;
   }
 
   /**
    * Get a single combined audience
-   *
-   * @param accountId - Account ID
-   * @param audienceId - Combined audience ID
-   * @returns Combined audience details
    */
   async get(accountId: string, audienceId: string): Promise<CombinedAudience> {
-    return this.http.get<CombinedAudience>(
-      `${accountId}/combined-audiences/${audienceId}`
-    );
+    return this.http.get<CombinedAudience>(`${accountId}/combined_audiences/${audienceId}`);
   }
 
   /**
    * Create a combined audience
-   *
-   * @param accountId - Account ID
-   * @param audience - Combined audience configuration
-   * @returns Created combined audience
-   *
-   * @example
-   * ```typescript
-   * const audience = await client.combinedAudiences.create('my-account', {
-   *   name: 'High-Value Engaged Users',
-   *   description: 'Users who are both high-value and engaged',
-   *   include_rules: [
-   *     {
-   *       audience_type: 'CUSTOM_AUDIENCE',
-   *       audiences: [{ id: 'custom-1', name: null }]
-   *     },
-   *     {
-   *       audience_type: 'LOOKALIKE_AUDIENCE',
-   *       audiences: [{ id: 'lookalike-1', name: null }]
-   *     }
-   *   ],
-   *   exclude_rules: [
-   *     {
-   *       audience_type: 'CUSTOM_AUDIENCE',
-   *       audiences: [{ id: 'converters', name: null }]
-   *     }
-   *   ]
-   * });
-   * ```
    */
   async create(
     accountId: string,
     audience: CreateCombinedAudienceRequest
   ): Promise<CombinedAudience> {
-    return this.http.post<CombinedAudience>(
-      `${accountId}/combined-audiences`,
-      audience
-    );
+    return this.http.post<CombinedAudience>(`${accountId}/combined_audiences`, audience);
   }
 
   /**
    * Update a combined audience
-   *
-   * @param accountId - Account ID
-   * @param audienceId - Combined audience ID
-   * @param updates - Fields to update
-   * @returns Updated combined audience
    */
   async update(
     accountId: string,
@@ -132,7 +67,7 @@ export class CombinedAudiencesAPI {
     updates: UpdateCombinedAudienceRequest
   ): Promise<CombinedAudience> {
     return this.http.post<CombinedAudience>(
-      `${accountId}/combined-audiences/${audienceId}`,
+      `${accountId}/combined_audiences/${audienceId}`,
       updates
     );
   }
