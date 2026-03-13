@@ -75,7 +75,7 @@ describe('ItemsAPI', () => {
       const result = await itemsApi.create(accountId, campaignId, createRequest);
 
       expect(mockHttp.post).toHaveBeenCalledWith(
-        `${accountId}/campaigns/${campaignId}/items/`,
+        `${accountId}/campaigns/${campaignId}/items`,
         createRequest
       );
       expect(result).toEqual(mockItem);
@@ -204,12 +204,10 @@ describe('ItemsAPI', () => {
 
   describe('bulkCreate', () => {
     it('should bulk create items', async () => {
-      const bulkRequest = {
-        items: [
-          { url: 'https://example.com/1', title: 'Title 1', thumbnail_url: 'img1.jpg' },
-          { url: 'https://example.com/2', title: 'Title 2', thumbnail_url: 'img2.jpg' },
-        ],
-      };
+      const items = [
+        { url: 'https://example.com/1', title: 'Title 1', thumbnail_url: 'img1.jpg' },
+        { url: 'https://example.com/2', title: 'Title 2', thumbnail_url: 'img2.jpg' },
+      ];
       const mockResponse = {
         results: [
           { id: 'item-1', title: 'Title 1' },
@@ -218,11 +216,11 @@ describe('ItemsAPI', () => {
       };
       mockHttp.post.mockResolvedValue(mockResponse);
 
-      const result = await itemsApi.bulkCreate(accountId, campaignId, bulkRequest);
+      const result = await itemsApi.bulkCreate(accountId, campaignId, items);
 
       expect(mockHttp.post).toHaveBeenCalledWith(
         `${accountId}/campaigns/${campaignId}/items/mass`,
-        bulkRequest
+        items
       );
       expect(result).toEqual(mockResponse);
     });

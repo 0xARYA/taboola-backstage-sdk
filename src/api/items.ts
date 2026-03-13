@@ -5,7 +5,6 @@
 import type { HttpClient } from '../utils/http.js';
 import type {
   BulkCreateItemData,
-  BulkCreateItemsRequest,
   BulkCreateItemsResponse,
   BulkDeleteItemsRequest,
   BulkUpdateItemsRequest,
@@ -123,7 +122,7 @@ export class ItemsAPI {
     campaignId: string,
     item: CreateItemRequest
   ): Promise<CampaignItem> {
-    return this.http.post<CampaignItem>(`${accountId}/campaigns/${campaignId}/items/`, item);
+    return this.http.post<CampaignItem>(`${accountId}/campaigns/${campaignId}/items`, item);
   }
 
   /**
@@ -233,27 +232,25 @@ export class ItemsAPI {
    *
    * @param accountId - Account ID
    * @param campaignId - Campaign ID
-   * @param request - Bulk create request with items array
+   * @param items - Array of items to create
    *
    * @example
    * ```typescript
-   * const response = await client.items.bulkCreate('my-account', '12345', {
-   *   items: [
-   *     { url: 'https://example.com/page1', title: 'Title 1', thumbnail_url: '...' },
-   *     { url: 'https://example.com/page2', title: 'Title 2', thumbnail_url: '...' },
-   *   ],
-   * });
+   * const response = await client.items.bulkCreate('my-account', '12345', [
+   *   { url: 'https://example.com/page1', title: 'Title 1', thumbnail_url: '...' },
+   *   { url: 'https://example.com/page2', title: 'Title 2', thumbnail_url: '...' },
+   * ]);
    * console.log('Created', response.results.length, 'items');
    * ```
    */
   async bulkCreate(
     accountId: string,
     campaignId: string,
-    request: BulkCreateItemsRequest
+    items: BulkCreateItemData[]
   ): Promise<BulkCreateItemsResponse> {
     return this.http.post<BulkCreateItemsResponse>(
       `${accountId}/campaigns/${campaignId}/items/mass`,
-      request
+      items
     );
   }
 
