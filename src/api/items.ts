@@ -250,7 +250,7 @@ export class ItemsAPI {
   ): Promise<BulkCreateItemsResponse> {
     return this.http.post<BulkCreateItemsResponse>(
       `${accountId}/campaigns/${campaignId}/items/mass`,
-      items
+      { collection: items }
     );
   }
 

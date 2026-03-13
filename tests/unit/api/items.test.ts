@@ -220,7 +220,7 @@ describe('ItemsAPI', () => {
 
       expect(mockHttp.post).toHaveBeenCalledWith(
         `${accountId}/campaigns/${campaignId}/items/mass`,
-        items
+        { collection: items }
       );
       expect(result).toEqual(mockResponse);
     });
