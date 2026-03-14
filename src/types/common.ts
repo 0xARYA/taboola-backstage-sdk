@@ -26,7 +26,7 @@ export type MultiTargetingState = 'ALL' | 'EXISTS' | 'NOT_EXISTS';
  */
 export interface MultiTargeting {
   state: MultiTargetingState;
-  value: unknown[] | null;
+  value: TargetingValue[] | null;
   href?: string | null;
 }
 
@@ -91,7 +91,8 @@ export type ItemStatus =
   | 'PAUSED'
   | 'STOPPED'
   | 'PENDING_APPROVAL'
-  | 'REJECTED';
+  | 'REJECTED'
+  | 'FAILED_TO_CREATE';
 
 /**
  * Pricing models
@@ -166,7 +167,11 @@ export type CTAType =
   | 'SHOP_NOW'
   | 'SIGN_UP'
   | 'SUBSCRIBE'
-  | 'WATCH_MORE';
+  | 'WATCH_MORE'
+  | 'INSTALL_NOW'
+  | 'CLICK_HERE'
+  | 'TRY_NOW'
+  | 'SEARCH_NOW';
 
 /**
  * Item types
@@ -232,3 +237,18 @@ export type RealtimeCampaignDimension =
  * @see https://developers.taboola.com/backstage-api/reference/realtime-ads-report
  */
 export type RealtimeAdsDimension = 'by_item' | 'by_item_by_smallest_time_bucket';
+
+/**
+ * External metadata key-value pair
+ */
+export interface ExternalMetadataKeyValue {
+  key: string;
+  value: string;
+}
+
+/**
+ * External metadata collection
+ */
+export interface ExternalMetadata {
+  data: ExternalMetadataKeyValue[];
+}

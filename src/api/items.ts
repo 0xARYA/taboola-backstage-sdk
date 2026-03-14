@@ -5,6 +5,7 @@
 import type { HttpClient } from '../utils/http.js';
 import type {
   BulkCreateItemData,
+  BulkCreateItemsAcrossCampaignsRequest,
   BulkCreateItemsResponse,
   BulkDeleteItemsRequest,
   BulkUpdateItemsRequest,
@@ -287,9 +288,9 @@ export class ItemsAPI {
    */
   async bulkCreateAcrossCampaigns(
     accountId: string,
-    items: (BulkCreateItemData & { campaign_id: string })[]
+    request: BulkCreateItemsAcrossCampaignsRequest
   ): Promise<BulkCreateItemsResponse> {
-    return this.http.put<BulkCreateItemsResponse>(`${accountId}/items/bulk`, { items });
+    return this.http.put<BulkCreateItemsResponse>(`${accountId}/items/bulk`, request);
   }
 
   /**
@@ -310,9 +311,13 @@ export class ItemsAPI {
    */
   async bulkUpdate(
     accountId: string,
-    request: BulkUpdateItemsRequest
+    request: BulkUpdateItemsRequest,
+    isAtomic = false
   ): Promise<CampaignItemListResponse> {
-    return this.http.post<CampaignItemListResponse>(`${accountId}/items/bulk`, request);
+    return this.http.post<CampaignItemListResponse>(
+      `${accountId}/items/bulk?is_atomic=${String(isAtomic)}`,
+      request
+    );
   }
 
   /**
@@ -331,8 +336,12 @@ export class ItemsAPI {
    * });
    * ```
    */
-  async bulkDelete(accountId: string, request: BulkDeleteItemsRequest): Promise<void> {
-    await this.http.delete(`${accountId}/items/bulk`, {
+  async bulkDelete(
+    accountId: string,
+    request: BulkDeleteItemsRequest,
+    isAtomic = false
+  ): Promise<void> {
+    await this.http.delete(`${accountId}/items/bulk?is_atomic=${String(isAtomic)}`, {
       json: request,
     });
   }

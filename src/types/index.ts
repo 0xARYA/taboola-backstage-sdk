@@ -13,6 +13,8 @@ export type {
   CurrencyCode,
   DailyAdDeliveryModel,
   DateString,
+  ExternalMetadata,
+  ExternalMetadataKeyValue,
   ItemStatus,
   ItemType,
   ListResponse,
@@ -58,6 +60,7 @@ export type {
   CampaignBase,
   CampaignBaseListResponse,
   CampaignListResponse,
+  CampaignsGroup,
   CampaignPatchRequest,
   CampaignReachEstimatorRequest,
   CampaignReachEstimatorResponse,
@@ -80,6 +83,7 @@ export type {
 // Item types
 export type {
   BulkCreateItemData,
+  BulkCreateItemsAcrossCampaignsRequest,
   BulkCreateItemsRequest,
   BulkCreateItemsResponse,
   BulkDeleteItemsRequest,

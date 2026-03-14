@@ -2,23 +2,21 @@
  * Campaign Item (Ad) types for Taboola Backstage API
  */
 
-import type { ApprovalState, CTAType, ItemStatus, ItemType } from './common.js';
+import type { ApprovalState, CTAType, ExternalMetadata, ItemStatus, ItemType } from './common.js';
 
 /**
  * Creative focus type
  * @deprecated Use automatic cropping instead
  */
-export type CreativeFocusType = 'AUTOMATIC' | 'CUSTOM';
+export type CreativeFocusType = 'AUTOMATIC' | 'COORDINATES';
 
 /**
  * Coordinates for custom creative focus
  * @deprecated
  */
 export interface Coordinates {
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
+  x: number;
+  y: number;
 }
 
 /**
@@ -137,6 +135,8 @@ export interface CampaignItem {
   start_date?: string;
   /** Item end date */
   end_date?: string;
+  /** External metadata */
+  external_metadata?: ExternalMetadata;
 }
 
 /**
@@ -255,39 +255,33 @@ export interface BulkCreateItemsResponse {
 }
 
 /**
- * Bulk item update request (across campaigns)
+ * Bulk item update request
  */
 export interface BulkUpdateItemsRequest {
-  items: {
-    /** Item ID */
-    id: string;
-    /** Campaign ID */
-    campaign_id: string;
-    /** Ad title */
-    title?: string;
-    /** Landing page URL */
-    url?: string;
-    /** Ad description */
-    description?: string;
-    /** Thumbnail image URL */
-    thumbnail_url?: string;
-    /** Whether item is active */
-    is_active?: boolean;
-    /** CTA configuration */
-    cta?: CTA;
-  }[];
+  /** Item IDs to update */
+  items_to_update: number[];
+  /** Baseline item with fields to apply to all items */
+  baseline_item: UpdateItemRequest;
 }
 
 /**
- * Bulk item delete request (across campaigns)
+ * Bulk item delete request
  */
 export interface BulkDeleteItemsRequest {
-  items: {
-    /** Item ID */
-    id: string;
-    /** Campaign ID */
-    campaign_id: string;
-  }[];
+  /** Item IDs to delete */
+  items_to_update: number[];
+  /** Baseline item (typically empty or with minimal fields) */
+  baseline_item: Partial<UpdateItemRequest>;
+}
+
+/**
+ * Bulk create items across multiple campaigns request
+ */
+export interface BulkCreateItemsAcrossCampaignsRequest {
+  /** Campaign IDs to create items in */
+  campaign_ids: number[];
+  /** Items to create */
+  items: BulkCreateItemData[];
 }
 
 /**

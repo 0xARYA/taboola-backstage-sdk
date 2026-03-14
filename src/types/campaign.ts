@@ -10,6 +10,7 @@ import type {
   CurrencyCode,
   DailyAdDeliveryModel,
   DateString,
+  ExternalMetadata,
   MarketingObjective,
   MultiTargeting,
   PricingModel,
@@ -22,10 +23,10 @@ import type {
  * Publisher bid modifier entry
  */
 export interface PublisherBidModifier {
-  /** Publisher ID */
-  publisher_id: string;
-  /** Bid modifier value (1.0 = no change, 1.5 = +50%, 0.5 = -50%) */
-  modifier: number;
+  /** Target publisher */
+  target: string;
+  /** CPC modification value (1.0 = no change, 1.5 = +50%, 0.5 = -50%) */
+  cpc_modification: number;
 }
 
 /**
@@ -39,10 +40,10 @@ export interface PublisherBidModifierCollection {
  * Publisher bid strategy modifier entry
  */
 export interface PublisherBidStrategyModifier {
-  /** Publisher ID */
-  publisher_id: string;
-  /** Target CPA for this publisher */
-  target_cpa?: number;
+  /** Publisher name */
+  publisher: string;
+  /** Bid strategy for this publisher */
+  bid_strategy: BidStrategy;
 }
 
 /**
@@ -262,8 +263,10 @@ export interface Campaign {
   conversion_rules?: CampaignConversionRules;
   /** Attribution configuration for conversion tracking */
   conversion_configuration?: AttributionConfig;
+  /** External metadata */
+  external_metadata?: ExternalMetadata;
   /** Campaign groups (ReadOnly) */
-  campaign_groups?: string[];
+  campaign_groups?: CampaignsGroup;
   /** Start date in UTC (ReadOnly) */
   start_date_in_utc?: DateString | null;
   /** End date in UTC (ReadOnly) */
@@ -359,7 +362,11 @@ export interface CreateCampaignRequest {
   /** Activity schedule */
   activity_schedule?: ActivitySchedule;
   /** Conversion rules to associate with this campaign */
-  conversion_rules?: CampaignConversionRule[];
+  conversion_rules?: CampaignConversionRules;
+  /** Attribution configuration for conversion tracking */
+  conversion_configuration?: AttributionConfig;
+  /** External metadata */
+  external_metadata?: ExternalMetadata;
 }
 
 /**
@@ -456,7 +463,11 @@ export interface UpdateCampaignRequest {
   /** Activity schedule */
   activity_schedule?: ActivitySchedule;
   /** Conversion rules to associate with this campaign */
-  conversion_rules?: CampaignConversionRule[];
+  conversion_rules?: CampaignConversionRules;
+  /** Attribution configuration for conversion tracking */
+  conversion_configuration?: AttributionConfig;
+  /** External metadata */
+  external_metadata?: ExternalMetadata;
 }
 
 /**
@@ -554,7 +565,7 @@ export interface CampaignBase {
   /** Marketing objective */
   marketing_objective?: MarketingObjective;
   /** Campaign groups */
-  campaign_groups?: string[];
+  campaign_groups?: CampaignsGroup;
 }
 
 /**
@@ -595,4 +606,11 @@ export interface DuplicateCampaignRequest {
   name?: string;
   /** Duplication settings */
   duplicate_settings?: DuplicateSettings;
+}
+
+/**
+ * Campaign group with shared budget reference
+ */
+export interface CampaignsGroup {
+  shared_budget: { id: number; name: string; status: string };
 }

@@ -34,7 +34,17 @@ export interface ConversionRule {
 /**
  * Conversion rule status
  */
-export type ConversionRuleStatus = 'ACTIVE' | 'DISABLED' | 'ARCHIVED';
+export type ConversionRuleStatus =
+  | 'ACTIVE'
+  | 'DISABLED'
+  | 'ARCHIVED'
+  | 'NO_RECENT_ACTIVITY'
+  | 'NO_ACTIVITY_YET'
+  | 'READY'
+  | 'PROCESSING'
+  | 'ERROR'
+  | 'GAINING_SCALE'
+  | 'ERROR_SEED_SIZE_TOO_SMALL';
 
 /**
  * Conversion rule type

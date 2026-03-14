@@ -106,7 +106,7 @@ export class DictionaryAPI {
    */
   async getOperatingSystems(): Promise<OperatingSystemInfo[]> {
     const response = await this.http.get<DictionaryListResponse<OperatingSystemInfo>>(
-      'resources/operating-systems'
+      'resources/campaigns_properties/operating_systems'
     );
     return response.results;
   }
@@ -116,7 +116,7 @@ export class DictionaryAPI {
    */
   async getIOSVersions(): Promise<OSVersion[]> {
     const response = await this.http.get<DictionaryListResponse<OSVersion>>(
-      'resources/operating-systems/IOS/versions'
+      'resources/campaigns_properties/operating_systems/IOS'
     );
     return response.results;
   }
@@ -126,7 +126,7 @@ export class DictionaryAPI {
    */
   async getAndroidVersions(): Promise<OSVersion[]> {
     const response = await this.http.get<DictionaryListResponse<OSVersion>>(
-      'resources/operating-systems/ANDROID/versions'
+      'resources/campaigns_properties/operating_systems/ANDROID'
     );
     return response.results;
   }

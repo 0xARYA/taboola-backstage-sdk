@@ -125,7 +125,7 @@ describe('DictionaryAPI', () => {
 
       const result = await dictionaryApi.getOperatingSystems();
 
-      expect(mockHttp.get).toHaveBeenCalledWith('resources/operating-systems');
+      expect(mockHttp.get).toHaveBeenCalledWith('resources/campaigns_properties/operating_systems');
       expect(result).toEqual(mockResponse.results);
     });
   });

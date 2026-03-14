@@ -124,6 +124,11 @@ export interface ContextualSegment {
   provider?: string | null;
   allowed_countries?: string[] | null;
   size?: number | null;
+  articles?: number | null;
+  is_targetable?: boolean | null;
+  is_bundle?: boolean | null;
+  is_active?: boolean | null;
+  taxonomy_label?: string | null;
 }
 
 /**

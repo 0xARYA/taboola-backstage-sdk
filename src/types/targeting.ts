@@ -10,7 +10,7 @@
  */
 export interface TargetingRestriction<T> {
   collection: T[];
-  type: 'INCLUDE' | 'EXCLUDE';
+  type: 'INCLUDE' | 'EXCLUDE' | 'ALL';
 }
 
 /**

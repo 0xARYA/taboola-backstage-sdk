@@ -227,16 +227,37 @@ describe('ItemsAPI', () => {
   });
 
   describe('bulkUpdate', () => {
-    it('should bulk update items across campaigns', async () => {
+    it('should bulk update items', async () => {
       const bulkRequest = {
-        items: [{ id: 'i1', campaign_id: 'c1', is_active: false }],
+        items_to_update: [1, 2],
+        baseline_item: { is_active: false },
       };
       const mockResponse = { results: [] };
       mockHttp.post.mockResolvedValue(mockResponse);
 
       const result = await itemsApi.bulkUpdate(accountId, bulkRequest);
 
-      expect(mockHttp.post).toHaveBeenCalledWith(`${accountId}/items/bulk`, bulkRequest);
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/items/bulk?is_atomic=false`,
+        bulkRequest
+      );
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should bulk update items with is_atomic=true', async () => {
+      const bulkRequest = {
+        items_to_update: [1, 2],
+        baseline_item: { is_active: false },
+      };
+      const mockResponse = { results: [] };
+      mockHttp.post.mockResolvedValue(mockResponse);
+
+      const result = await itemsApi.bulkUpdate(accountId, bulkRequest, true);
+
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${accountId}/items/bulk?is_atomic=true`,
+        bulkRequest
+      );
       expect(result).toEqual(mockResponse);
     });
   });
@@ -244,16 +265,14 @@ describe('ItemsAPI', () => {
   describe('bulkDelete', () => {
     it('should bulk delete items', async () => {
       const deleteRequest = {
-        items: [
-          { id: 'i1', campaign_id: 'c1' },
-          { id: 'i2', campaign_id: 'c1' },
-        ],
+        items_to_update: [1, 2],
+        baseline_item: {},
       };
       mockHttp.delete.mockResolvedValue(undefined);
 
       await itemsApi.bulkDelete(accountId, deleteRequest);
 
-      expect(mockHttp.delete).toHaveBeenCalledWith(`${accountId}/items/bulk`, {
+      expect(mockHttp.delete).toHaveBeenCalledWith(`${accountId}/items/bulk?is_atomic=false`, {
         json: deleteRequest,
       });
     });
