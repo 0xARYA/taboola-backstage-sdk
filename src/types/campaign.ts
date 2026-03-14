@@ -118,10 +118,34 @@ export interface PolicyReview {
  * Conversion rule reference for campaign attribution
  */
 export interface CampaignConversionRule {
-  /** Conversion rule ID */
+  /** Conversion rule ID (writable) */
   id: number;
-  /** Display name of the conversion rule */
+  /** Display name of the conversion rule (read-only) */
   display_name?: string;
+  /** Rule status (read-only) */
+  status?: string;
+  /** Whether to include in total conversions (read-only) */
+  include_in_total_conversions?: boolean;
+}
+
+/**
+ * Conversion rules configuration for a campaign
+ */
+export interface CampaignConversionRules {
+  /** List of conversion rules */
+  rules: CampaignConversionRule[];
+}
+
+/**
+ * Attribution configuration for conversion tracking
+ */
+export interface AttributionConfig {
+  /** Lookback window in minutes for click attribution */
+  look_back_window_in_minutes?: number;
+  /** Lookback window in minutes for view-through attribution */
+  vta_look_back_window_in_minutes?: number;
+  /** How conversions are counted */
+  aggregation_type?: 'AGGREGATED' | 'LAST_VALUE';
 }
 
 /**
@@ -235,7 +259,9 @@ export interface Campaign {
   /** Campaign learning/optimization state (ReadOnly) */
   learning_state?: string;
   /** Conversion rules associated with this campaign */
-  conversion_rules?: CampaignConversionRule[];
+  conversion_rules?: CampaignConversionRules;
+  /** Attribution configuration for conversion tracking */
+  conversion_configuration?: AttributionConfig;
   /** Campaign groups (ReadOnly) */
   campaign_groups?: string[];
   /** Start date in UTC (ReadOnly) */
