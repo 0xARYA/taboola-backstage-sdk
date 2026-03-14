@@ -87,6 +87,7 @@ export type {
   ActivityScheduleRule,
   BulkCampaignUpdateRequest,
   Campaign,
+  CampaignConversionRule,
   CampaignBase,
   CampaignBaseListResponse,
   CampaignListResponse,

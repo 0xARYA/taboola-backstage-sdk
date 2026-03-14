@@ -115,6 +115,16 @@ export interface PolicyReview {
 }
 
 /**
+ * Conversion rule reference for campaign attribution
+ */
+export interface CampaignConversionRule {
+  /** Conversion rule ID */
+  id: number;
+  /** Display name of the conversion rule */
+  display_name?: string;
+}
+
+/**
  * Full Campaign object
  */
 export interface Campaign {
@@ -224,6 +234,8 @@ export interface Campaign {
   type?: string;
   /** Campaign learning/optimization state (ReadOnly) */
   learning_state?: string;
+  /** Conversion rules associated with this campaign */
+  conversion_rules?: CampaignConversionRule[];
   /** Campaign groups (ReadOnly) */
   campaign_groups?: string[];
   /** Start date in UTC (ReadOnly) */
@@ -320,6 +332,8 @@ export interface CreateCampaignRequest {
   viewability_tag?: ViewabilityTag;
   /** Activity schedule */
   activity_schedule?: ActivitySchedule;
+  /** Conversion rules to associate with this campaign */
+  conversion_rules?: CampaignConversionRule[];
 }
 
 /**
@@ -415,6 +429,8 @@ export interface UpdateCampaignRequest {
   viewability_tag?: ViewabilityTag;
   /** Activity schedule */
   activity_schedule?: ActivitySchedule;
+  /** Conversion rules to associate with this campaign */
+  conversion_rules?: CampaignConversionRule[];
 }
 
 /**
