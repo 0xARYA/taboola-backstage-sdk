@@ -23,10 +23,10 @@ import type {
  * Publisher bid modifier entry
  */
 export interface PublisherBidModifier {
-  /** Publisher site ID */
-  site: string;
-  /** Bid modifier value (1.0 = no change, 1.5 = +50%, 0.5 = -50%) */
-  modifier: number;
+  /** Publisher account_id (aka site) to apply the bid modifier to */
+  target: string;
+  /** CPC modification value (0.011–2.0; 1.0 = no change, 0.5 = -50%, 1.5 = +50%) */
+  cpc_modification: number;
 }
 
 /**
@@ -40,9 +40,9 @@ export interface PublisherBidModifierCollection {
  * Publisher bid strategy modifier entry
  */
 export interface PublisherBidStrategyModifier {
-  /** Publisher site ID */
-  site: string;
-  /** Bid strategy for this publisher */
+  /** Publisher site name */
+  publisher: string;
+  /** Bid strategy for this publisher (only FIXED is supported) */
   bid_strategy: BidStrategy;
 }
 
